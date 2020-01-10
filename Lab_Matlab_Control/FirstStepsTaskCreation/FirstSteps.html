@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,IE=9,chrome=1"><meta name="generator" content="MATLAB R2018b"><title>First steps with Tower of Psych (tops) and Snow-Dots (dots)</title><style type="text/css">.rtcContent { padding: 30px; } .S0 { margin: 3px 10px 5px 4px; padding: 0px; line-height: 28.7999992370605px; min-height: 0px; white-space: pre-wrap; color: rgb(213, 80, 0); font-family: Helvetica, Arial, sans-serif; font-style: normal; font-size: 24px; font-weight: normal; text-align: left;  }
+.S1 { margin: 2px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pre-wrap; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif; font-style: normal; font-size: 14px; font-weight: normal; text-align: left;  }
+.S2 { margin: 20px 10px 5px 4px; padding: 0px; line-height: 20px; min-height: 0px; white-space: pre-wrap; color: rgb(60, 60, 60); font-family: Helvetica, Arial, sans-serif; font-style: normal; font-size: 20px; font-weight: bold; text-align: left;  }
+.CodeBlock { background-color: #F7F7F7; margin: 10px 0 10px 0;}
+.S3 { border-left: 1px solid rgb(233, 233, 233); border-right: 1px solid rgb(233, 233, 233); border-top: 1px solid rgb(233, 233, 233); border-bottom: 1px solid rgb(233, 233, 233); border-radius: 4px; padding: 6px 45px 4px 13px; line-height: 17.234001159668px; min-height: 18px; white-space: nowrap; color: rgb(0, 0, 0); font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 14px;  }
+.S4 { margin: 10px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pre-wrap; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif; font-style: normal; font-size: 14px; font-weight: normal; text-align: left;  }
+.S5 { margin: 10px 0px 20px; padding-left: 0px; font-family: Helvetica, Arial, sans-serif; font-size: 14px;  }
+.S6 { margin-left: 56px; line-height: 21px; min-height: 0px; text-align: left; white-space: pre-wrap;  }
+.S7 { border-left: 1px solid rgb(233, 233, 233); border-right: 1px solid rgb(233, 233, 233); border-top: 1px solid rgb(233, 233, 233); border-bottom: 1px solid rgb(233, 233, 233); border-radius: 4px 4px 0px 0px; padding: 6px 45px 4px 13px; line-height: 17.234001159668px; min-height: 18px; white-space: nowrap; color: rgb(0, 0, 0); font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 14px;  }
+.S8 { color: rgb(64, 64, 64); padding: 10px 0px 6px 17px; background: rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 14px; overflow-x: hidden; line-height: 17.234001159668px;  }
+.embeddedOutputsErrorElement {min-height: 18px; max-height: 250px; overflow: auto;}
+.embeddedOutputsErrorElement.inlineElement {}
+.embeddedOutputsErrorElement.rightPaneElement {}
+.embeddedOutputsWarningElement{min-height: 18px; max-height: 250px; overflow: auto;}
+.embeddedOutputsWarningElement.inlineElement {}
+.embeddedOutputsWarningElement.rightPaneElement {}
+.diagnosticMessage-wrapper {font-family: Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 12px;}
+.diagnosticMessage-wrapper.diagnosticMessage-warningType {color: rgb(255,100,0);}
+.diagnosticMessage-wrapper.diagnosticMessage-warningType a {color: rgb(255,100,0); text-decoration: underline;}
+.diagnosticMessage-wrapper.diagnosticMessage-errorType {color: rgb(230,0,0);}
+.diagnosticMessage-wrapper.diagnosticMessage-errorType a {color: rgb(230,0,0); text-decoration: underline;}
+.diagnosticMessage-wrapper .diagnosticMessage-messagePart {white-space: pre-wrap;}
+.diagnosticMessage-wrapper .diagnosticMessage-stackPart {white-space: pre;}
+.embeddedOutputsTextElement,.embeddedOutputsVariableStringElement {white-space: pre; word-wrap: initial; min-height: 18px; max-height: 250px; overflow: auto;}
+.textElement,.rtcDataTipElement .textElement {padding-top: 3px;}
+.embeddedOutputsTextElement.inlineElement,.embeddedOutputsVariableStringElement.inlineElement {}
+.inlineElement .textElement {}
+.embeddedOutputsTextElement.rightPaneElement,.embeddedOutputsVariableStringElement.rightPaneElement {min-height: 16px;}
+.rightPaneElement .textElement {padding-top: 2px; padding-left: 9px;}
+.S9 { border-left: 1px solid rgb(233, 233, 233); border-right: 1px solid rgb(233, 233, 233); border-top: 1px solid rgb(233, 233, 233); border-bottom: 0px none rgb(0, 0, 0); border-radius: 4px 4px 0px 0px; padding: 6px 45px 0px 13px; line-height: 17.234001159668px; min-height: 18px; white-space: nowrap; color: rgb(0, 0, 0); font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 14px;  }
+.S10 { border-left: 1px solid rgb(233, 233, 233); border-right: 1px solid rgb(233, 233, 233); border-top: 0px none rgb(0, 0, 0); border-bottom: 1px solid rgb(233, 233, 233); border-radius: 0px 0px 4px 4px; padding: 0px 45px 4px 13px; line-height: 17.234001159668px; min-height: 18px; white-space: nowrap; color: rgb(0, 0, 0); font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 14px;  }
+.S11 { margin: 15px 10px 5px 4px; padding: 0px; line-height: 28.7999992370605px; min-height: 0px; white-space: pre-wrap; color: rgb(213, 80, 0); font-family: Helvetica, Arial, sans-serif; font-style: normal; font-size: 24px; font-weight: normal; text-align: left;  }</style></head><body><div class = rtcContent><h1  class = 'S0'><span>First steps with Tower of Psych (tops) and Snow-Dots (dots)</span></h1><div  class = 'S1'><span>Welcome to our tutorial!</span></div><h2  class = 'S2'><span>Load the code base with ToolboxToolbox</span></h2><div  class = 'S1'><span>To get all the classes and functions from</span><span style=' font-style: italic;'> tops-dots </span><span>added to your path, it is most convenient to have ToolboxToolbox installed and type, at startup:</span></div><div class="CodeBlock"><div class="inlineWrapper"><div  class = 'S3'><span style="white-space: pre;"><span style="color: rgb(34, 139, 34);">%tbUse('Lab_Matlab_Control')</span></span></div></div></div><div  class = 'S4'><span style=' text-decoration: underline;'>Note:</span><span> the above code should be run from the console directly as it currently doesn't work with Live Scripts.</span></div><h2  class = 'S2'><span>Classes in </span><span style=' font-style: italic;'>tops-dots</span></h2><div  class = 'S1'><span>Almost all objects in </span><span style=' font-style: italic;'>tops-dots</span><span> are classes. A class is a self-contained object which has two types of associated functionalities:</span></div><ul  class = 'S5'><li  class = 'S6'><span>properties</span></li><li  class = 'S6'><span>methods</span></li></ul><div  class = 'S1'><span>Properties are variables (i.e. data containers) attached to the class instance, whereas methods are functions attached to the class instance.</span></div><div  class = 'S1'><span>To illustrate these notions, we will work with an example task class, which we can create (instantiate) in the following way:</span></div><div class="CodeBlock"><div class="inlineWrapper"><div  class = 'S3'><span style="white-space: pre;"><span>my_task = topsTreeNodeTaskSaccade;</span></span></div></div></div><div  class = 'S4'><span>To list the class' properties, simply look at the object:</span></div><div class="CodeBlock"><div class="inlineWrapper outputs"><div  class = 'S7'><span style="white-space: pre;"><span>my_task</span></span></div><div  class = 'S8'><div class="inlineElement eoOutputWrapper embeddedOutputsVariableStringElement scrollableOutput" uid="435F1627" data-scroll-top="null" data-scroll-left="null" data-width="961" data-height="510" data-hashorizontaloverflow="true" data-testid="output_0" style="max-height: 261px; width: 991px;"><div class="textElement"><div><span class="variableNameElement">my_task = </span></div><div>  topsTreeNodeTaskSaccade with properties:
+
+                  settings: [1x1 struct]
+                    timing: [1x1 struct]
+      independentVariables: [1x1 struct]
+           trialDataFields: {'RT'  'correct'  'fixationOn'  'fixationStart'  'targetOn'  'targetOff'  'fixationOff'  'choiceTime'  'feedbackOn'}
+                  drawable: [1x1 struct]
+                  readable: [1x1 struct]
+                    taskID: -1
+                taskTypeID: -1
+                 trialData: [1x1 struct]
+                trialCount: 0
+           trialIterations: 1
+      trialIterationMethod: 'random'
+    randomizeWhenRepeating: 1
+              trialIndices: []
+             statusStrings: {}
+              stateMachine: []
+            completedTrial: 0
+                iterations: Inf
+            iterationCount: 0
+           iterationMethod: 'sequential'
+                  nodeData: []
+                   helpers: [1x1 struct]
+            inheritHelpers: 'all'
+               helperTypes: {'drawable'  'playable'  'readable'  'writable'  'general'}
+                  children: {}
+            startFevalable: {@run  [1x1 topsCallList]}
+           finishFevalable: {@run  [1x1 topsCallList]}
+                 isRunning: 0
+                    caller: []
+               startString: 'start'
+              finishString: 'finish'
+                      name: 'topsTreeNodeTask'
+             clockFunction: @mglGetSecs
+</div></div></div></div></div></div><div  class = 'S4'><span>Classes are close relatives of structs. For instance, it is very easy to create a struct that will contain all the properties of a class:</span></div><div class="CodeBlock"><div class="inlineWrapper outputs"><div  class = 'S7'><span style="white-space: pre;"><span>struct(my_task)</span></span></div><div  class = 'S8'><div class="inlineElement eoOutputWrapper embeddedOutputsWarningElement" uid="BF4DA8C4" data-scroll-top="null" data-scroll-left="null" data-width="961" data-height="30" data-hashorizontaloverflow="false" data-testid="output_1" style="max-height: 261px; width: 991px;"><div class="diagnosticMessage-wrapper diagnosticMessage-warningType"><div class="diagnosticMessage-messagePart">Warning: Calling STRUCT on an object prevents the object from hiding its implementation details and should thus be avoided. Use DISP or DISPLAY to see the visible public details of an object. See 'help struct' for more information.</div><div class="diagnosticMessage-stackPart"></div></div></div><div class="inlineElement eoOutputWrapper embeddedOutputsVariableStringElement scrollableOutput" uid="5A7AC6A3" data-scroll-top="null" data-scroll-left="null" data-width="961" data-height="482" data-hashorizontaloverflow="true" data-testid="output_2" style="max-height: 493px; width: 991px;"><div class="textElement"><div><span class="variableNameElement">ans = </span></div><div>                  settings: [1x1 struct]
+                    timing: [1x1 struct]
+      independentVariables: [1x1 struct]
+           trialDataFields: {'RT'  'correct'  'fixationOn'  'fixationStart'  'targetOn'  'targetOff'  'fixationOff'  'choiceTime'  'feedbackOn'}
+                  drawable: [1x1 struct]
+                  readable: [1x1 struct]
+                    taskID: -1
+                taskTypeID: -1
+                 trialData: [1x1 struct]
+                trialCount: 0
+           trialIterations: 1
+      trialIterationMethod: 'random'
+    randomizeWhenRepeating: 1
+              trialIndices: []
+             statusStrings: {}
+              stateMachine: []
+            completedTrial: 0
+                iterations: Inf
+            iterationCount: 0
+           iterationMethod: 'sequential'
+                  nodeData: []
+                   helpers: [1x1 struct]
+            inheritHelpers: 'all'
+               helperTypes: {'drawable'  'playable'  'readable'  'writable'  'general'}
+                  children: {}
+            startFevalable: {@run  [1x1 topsCallList]}
+           finishFevalable: {@run  [1x1 topsCallList]}
+                 isRunning: 0
+                    caller: []
+               startString: 'start'
+              finishString: 'finish'
+                      name: 'topsTreeNodeTask'
+             clockFunction: @mglGetSecs
+</div></div></div></div></div></div><div  class = 'S4'><span>To list the methods of a class instance, you have several options which are slightly different. The clearest one is to open the file where the class is defined:</span></div><div class="CodeBlock"><div class="inlineWrapper"><div  class = 'S9'><span style="white-space: pre;"><span style="color: rgb(34, 139, 34);">% uncomment next line to open task file in MATLAB editor</span></span></div></div><div class="inlineWrapper"><div  class = 'S10'><span style="white-space: pre;"><span style="color: rgb(34, 139, 34);">% edit topsTreeNodeTaskSaccade</span></span></div></div></div><div  class = 'S4'><span>The above command should open the MATLAB editor. From there, if you click on the "Go To" button in the menu, you will see a list of functions appear, each of these functions is a method!</span></div><div  class = 'S1'><span>Another way to get a glance at a task object is to call the help function on it:</span></div><div class="CodeBlock"><div class="inlineWrapper outputs"><div  class = 'S7'><span style="white-space: pre;"><span>help(my_task)</span></span></div><div  class = 'S8'><div class="inlineElement eoOutputWrapper embeddedOutputsTextElement" uid="B9D0D52A" data-scroll-top="null" data-scroll-left="null" data-width="961" data-height="325" data-hashorizontaloverflow="false" data-testid="output_3" style="max-height: 336px; width: 991px;"><div class="textElement">--- help for <strong>topsTreeNodeTaskSaccade</strong> ---
+
+  @class <strong>topsTreeNodeTaskSaccade</strong>
+ 
+  Visually and Memory guided saccade tasks
+ 
+  For standard configurations, call:
+   <strong>topsTreeNodeTaskSaccade</strong>.getStandardConfiguration
+ 
+  Otherwise:
+   1. Create an instance directly:
+         task = <strong>topsTreeNodeTaskSaccade</strong>();
+ 
+   2. Set properties. These are required:
+         task.drawables.screenEnsemble
+         task.helpers.readers.theObject
+      Others can use defaults
+ 
+   3. Add this as a child to another topsTreeNode
+ 
+  5/28/18 created by jig
+
+    Reference page for topsTreeNodeTaskSaccade</div></div></div></div></div><div  class = 'S4'><span>At the bottom of the console output that this command generates, a hyperlink "</span><span style=' font-style: italic;'>Reference page for topsTreeNodeTaskSaccade</span><span>" appears. Clicking on it should make a help window for the object pop up. This help page will contain lists of all the properties and methods available for this object. However, these lists will also include properties and methods from parent classes. For more on this topic, see the next section.</span></div><h2  class = 'S2'><span>Class inheritance</span></h2><div  class = 'S1'><span>The top line of the 'topsTreeNodeTaskSaccade.m' file that we opened earlier reads "</span><span style=' font-style: italic;'>classdef topsTreeNodeTaskSaccade &lt; topsTreeNodeTask</span><span>". Because of this, we say that the </span><a href = "https://cpizzica.github.io/TopSnowDocs/classtops_tree_node_task.html"><span>topsTreeNodeTaskSaccade</span></a><span> class inherits from the </span><span style=' font-style: italic;'>topsTreeNodeTask</span><span> class. This entails that all the properties and methods from topsTreeNodeTask (called the superclass) are also properties and methods of any topsTreeNodeTaskSaccade object, </span><span style=' font-style: italic;'>unless they are re-defined in the child class</span><span>. Whenever a method from the superclass is re-defined in a class, we say that it is overloaded. An example of this can be seen with the </span><span style=' font-style: italic;'>finishTask()</span><span> method. As an exercise, try to see the difference between the methods </span><span style=' font-style: italic;'>topsTreeNodeTask.finishTask()</span><span> and </span><span style=' font-style: italic;'>topsTreeNodeTaskSaccade.finishTask()</span><span>.</span></div><h2  class = 'S2'><span>Task classes</span></h2><div  class = 'S1'><span>In tops-dots, any experimental task should be defined as a class that inherits from '</span><span style=' font-style: italic;'>topsTreeNodeTask</span><span>'. We have already seen an instance of such task class earlier, this was our 'my_task' object. </span></div><h1  class = 'S11'><span>General info</span></h1><div  class = 'S1'><span>Tower of Psych (tops) handles the 'TreeNode' structure on which any of our experimental tasks rely. On the other hand, Snow-Dots (dots) handles the interface to all the graphics, sound and input devices. Currently, whenever snow-dots functionalities are needed in a task (which fundamentally is a tops object), </span><span style=' font-style: italic;'>helpers</span><span> are used.</span></div></div><br>
+<!-- 
+##### SOURCE BEGIN #####
+%% First steps with Tower of Psych (tops) and Snow-Dots (dots)
+% Welcome to our tutorial!
+%% Load the code base with ToolboxToolbox
+% To get all the classes and functions from_ tops-dots _added to your path, 
+% it is most convenient to have ToolboxToolbox installed and type, at startup:
+
+%tbUse('Lab_Matlab_Control')
+%% 
+% Note: the above code should be run from the console directly as it currently 
+% doesn't work with Live Scripts.
+%% Classes in _tops-dots_
+% Almost all objects in _tops-dots_ are classes. A class is a self-contained 
+% object which has two types of associated functionalities:
+% 
+% * properties
+% * methods
+% 
+% Properties are variables (i.e. data containers) attached to the class instance, 
+% whereas methods are functions attached to the class instance.
+% 
+% To illustrate these notions, we will work with an example task class, which 
+% we can create (instantiate) in the following way:
+
+my_task = topsTreeNodeTaskSaccade;
+%% 
+% To list the class' properties, simply look at the object:
+
+my_task
+%% 
+% Classes are close relatives of structs. For instance, it is very easy 
+% to create a struct that will contain all the properties of a class:
+
+struct(my_task)
+%% 
+% To list the methods of a class instance, you have several options which 
+% are slightly different. The clearest one is to open the file where the class 
+% is defined:
+
+% uncomment next line to open task file in MATLAB editor
+% edit topsTreeNodeTaskSaccade
+%% 
+% The above command should open the MATLAB editor. From there, if you click 
+% on the "Go To" button in the menu, you will see a list of functions appear, 
+% each of these functions is a method!
+% 
+% Another way to get a glance at a task object is to call the help function 
+% on it:
+
+help(my_task)
+%% 
+% At the bottom of the console output that this command generates, a hyperlink 
+% "_Reference page for topsTreeNodeTaskSaccade_" appears. Clicking on it should 
+% make a help window for the object pop up. This help page will contain lists 
+% of all the properties and methods available for this object. However, these 
+% lists will also include properties and methods from parent classes. For more 
+% on this topic, see the next section.
+%% Class inheritance
+% The top line of the 'topsTreeNodeTaskSaccade.m' file that we opened earlier 
+% reads "_classdef topsTreeNodeTaskSaccade < topsTreeNodeTask_". Because of this, 
+% we say that the <https://cpizzica.github.io/TopSnowDocs/classtops_tree_node_task.html 
+% topsTreeNodeTaskSaccade> class inherits from the _topsTreeNodeTask_ class. This 
+% entails that all the properties and methods from topsTreeNodeTask (called the 
+% superclass) are also properties and methods of any topsTreeNodeTaskSaccade object, 
+% _unless they are re-defined in the child class_. Whenever a method from the 
+% superclass is re-defined in a class, we say that it is overloaded. An example 
+% of this can be seen with the _finishTask()_ method. As an exercise, try to see 
+% the difference between the methods _topsTreeNodeTask.finishTask()_ and _topsTreeNodeTaskSaccade.finishTask()_.
+%% Task classes
+% In tops-dots, any experimental task should be defined as a class that inherits 
+% from '_topsTreeNodeTask_'. We have already seen an instance of such task class 
+% earlier, this was our 'my_task' object. 
+%% General info
+% Tower of Psych (tops) handles the 'TreeNode' structure on which any of our 
+% experimental tasks rely. On the other hand, Snow-Dots (dots) handles the interface 
+% to all the graphics, sound and input devices. Currently, whenever snow-dots 
+% functionalities are needed in a task (which fundamentally is a tops object), 
+% _helpers_ are used.
+##### SOURCE END #####
+--></body></html>

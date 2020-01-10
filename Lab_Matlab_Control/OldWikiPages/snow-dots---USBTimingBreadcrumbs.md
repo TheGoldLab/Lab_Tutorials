@@ -1,0 +1,131 @@
+Snow Dots wants to control external hardware in order to do things like fire solenoids or synchronize with external data collection (like dropping ecodes on Plexon). The most convenient output would be USB, and in particular HID.
+
+But is USB a reasonable choice? What timing resolution and reliability should Snow Dots expect? To what extent does timing depend on a particular USB device or operating system?
+
+Well, I did a bunch of reading about USB timing. First I'll note the things I though were most relevant from each document I read. There's nothing novel here, just notes that someone else might find useful and links to where they came from.
+
+Then I'll outline a plan for the best timing I can think to implement for the Snow Dots mexHID() function. Later I hope to report on how the mexHID() modifications came out.
+
+**USB 2.0 Specification**
+
+I started with the USB spec itself. There is a useful summary at Beyond Logic.org. It was great, but apparently not done--as of 10 Aug 2010, it only goes up through chapter 7 of the spec.
+
+So I also went to the spec itself, which is at USB.org. The 2.0 spec is there. I didn't even look at the 3.0 spec.
+
+USB is built around the "host", which is basically the computer and operating system. Many devices connect to the host. Software clients can appear to connect to individual devices (and parts of devices) but they really all go through the host. The host manages bus transactions (moving data to or from a device) and partitions time into frames.
+
+In USB 2.0, a frame can be 1ms for "low" and "full" speed devices. A frame can be 125µs for "high" speed devices. It's up to a device to tell the host which speed it wants to use. "Speed" obviously refers to data transmission speeds. But for timing purposes, all I care about is that there are two possible frame resolutions, 1ms or 125µs, and a device will make that known.
+
+USB defines 4 kinds of "transactions" for moving data to and from devices: * Control transactions go both ways and they're good for identifying a new device and configuring it. They have no timing guarantees. * Bulk transactions are for moving big piles of data in one direction. They may be slow and I don't think they're relevant for Snow Dots timing purposes. * Isochronous transactions are always happening. They're meant to steam data in one direction. They promise bounded latency, but they don't do error correction or handshaking. Also, they might be cumbersome for non-streaming or bursty operations, like firing a solenoid. * interrupt transactions happen in a bursty fashion, have handshakes, and promise bounded latency. These seem like the best hope for Snow Dots USB timing.
+
+The word "interrupt" is interesting. Since USB is based around the host, and the host initiates all transactions, a device can't really interrupt the host. The best it can do is put data into an interrupt buffer and wait for the host to poll it, see that there's an interrupt waiting, and then read the data. Polling is supposed to happen every frame, so for many devices this will be once every 1ms. This is the worst-case scenario for timing resolution. High speed devices should do 8 times better. Devices with internal clocks and memory may do better still.
+
+The host and device should take care of any handshaking they need to do, for communications across the physical bus. This is part of the USB spec. Any handshaking Snow Dots might do with a device would be at least as slow and at least as coarse as what the host is already doing. So the question is, what kind of timing information can Snow Dots get from the host.
+
+Also part of the spec., "host controller" is supposed to be able to report its current frame number to a "client". Thus, Snow Dots should be able to ask the host what the current frame number is. If Snow Dots does this before and after initiating a transaction, it should be able to put bounds on when a transaction took place.
+
+That kind of bounding should work for things done synchronously--things of the flavor, "poll the device and tell me the value of button 2". This would not work for asynchronous behaviors--things of the flavor, "use this callback whenever button 2 changes"--because there's no way to check the host's frame number right before checking the value. Checking the frame number when the callback gets called is meaningless, since it could get called at any time after the event of interest.
+
+So, either the device needs to have its own clock and memory to keep track or value changes, or the host/operating system needs to record timestamps with high priority, like once per frame (I think OS X does do this...).
+
+The good news is: * USB interrupt transactions should provide control at the time scale of a USB frame, which should be 1ms at worst. * Snow Dots should not have to implement any handshaking of its own. * Snow Dots should be able to read frame numbers from the USB host, to put timing bounds on some transactions.
+
+**USB HID Device Class**
+
+Then I read abou the USB HID device class, which formalizes a subset of USB functionality. The HID device class definition is also at USB.org.
+
+HID devices are usually things like keyboards, pointers, and gamepads. But they can be anything that implements the HID interface, including digital-analog converters and microcontrollers. This is good news for Snow Dots because it means some HID devices might be powerful enough to do complex control and interactions with external hardware.
+
+The take-home from the HID device class definition is that HID devices are supposed to use control and interrupt transactions, but not bulk or isochronous. This seems fine. In particular: * All USB devices must support bi-directional control transactions. * All HID devices must support "in" interrupt transactions, for moving data from the device to the host with low latency. * HID devices may support "out" interrupt transactions as well, or they might just use control transactions for moving data from the host to the device.
+
+So, with HID devices that support "out" interrupt transactions, Snow Dots should be able to predict when a command would make it out across the USB bus to a device--during the next USB frame. For HID devices that don't support "out" interrupts, Snow Dots would have no reasonable way to predict.
+
+In either case, Snow Dots should be able to measure after the fact when the command made it out. The USB host should receive an acknowledgement handshake from the device when it received the command.
+
+The good news for HID is that there's no real bad news: HID devices will support "in" interrupt transactions. Some will also support "out" transactions.
+
+**OS X USB and HID Implementation**
+
+I revisited Apple's documentation of its USB and HID implementations. Apple's "USB Device Interface Guide" picks up well where the USB 2.0 spec leaves off. Similarly, their "HID Class Device Interface Guide" picks up from the HID definition.
+
+The OS X HID Manager is pretty easy to work with, and I've already implemented mexHID with it. This time through the docs I was looking for more specifics about USB frames and timestamps.
+
+The good news is that the Apple's IOUSB API supports querying of the USB frame number for 1ms frames and "microframe" number for 125µs frames. It also reports the frame length. So Snow Dots and mexHID should be able to count USB frames. The IOUSB functions also return the system's "absolute time" corresponding to the returned frame number, which should make it easy to reconcile frame numbers with other events. The API even estimates the "absolute time" timestamp jitter (+/-1ms or +/-200µs, depending on the version).
+
+One funny wrinkle is that Apple does not require HID devices to be USB devices. So on the one hand, mexHID uses the IOHID API, while USB frame counting comes from the IOUSB API. There doesn't not seem to be a free bridge between the two. So it may necessary to open an IOUSB interface for each device in parallel with the HID interfaces. It should be possible to do frame counting without actually "opening" the IOUSB interface, so I'm guessing the two interface will coexist peacefully.
+
+I still have questions about the IOHIDValue timestamps reported asynchronously. In particular, say mexHID has a device opened and has put a few device buttons into a queue to receive value changes. The queue callback can read the button values and each value has a timestamp. But where did the timestamp come from?
+
+My hope is that the IOHID makes timestamps during the USB frame when the values arrived at the host. These should be one USB frame old and reliably related to the event times. I am hoping that the timestamps are not made when the queue callback is called. This would be pointless. * I can get a sense of this by taking additional timestamps of my own, during the callback, and comparing them to the IOHIDValue timestamps. * It would be nice to know explicitly where the timestamps come from, but I don't see that in the docs. I'm guessing Apple just doesn't want to commit/admit that HID is based USB?
+
+**Psychtoolbox PsychHID**
+
+In an effort to not reinvent the wheel, I reread some about the Psychtoolbox HID implementation called PsychHID. To be honest, I don't like PsychHID and don't think it does a good job of managing HID device elements and queues. Some of its polling behavior is silly. I also think the developer(s) didn't read the spec. carefully enough. But I might be wrong, and PsychHID is worth mentioning.
+
+PsychHID is documented at psychtoolbox.org. The most interesting use of it is for their "Daq toolbox", which is designed to use the same "1208FS" digital-analog converter that Snow Dots and mexHID might want to use.
+
+There's a thread at the Psychtoolbox forum about timing with PsychHID. This is where I disagree with the developer(s) about what to expect from USB and HID: * One claim is that 2ms is the best resolution to be expected from USB devices. I think this is only true as a conservative estimate of what happens when you poll for one sample at a time, from Matlab. But setting up smarter queueing with the USB host or using a device (like the 1208FS!) with onboard clock and memory should improve the situation a lot. * Another claim is that a device is allowed to wait 5 (or many) seconds in order to fulfill a transaction, so who knows what timing to expect? But by my reading, this is not true of isochronous or interrupt transactions, which are promised to happen on the next frame. And even with control transactions, I think the handshake received by the host will indicate when the transaction actually got processed--which is really important. Following a transaction, I guess there is uncertainty about when a device will to something interesting in response, but this is not the same as the 5-second uncertainty cited.
+
+I think it's reasonable to expect that a device will act on a transaction as soon as possible (as fast as those transistors can go!) once it processes and sends an acknowledgement for a transaction. Why would it wait? I'm not certain how to verify this. It might have to be an assumption.
+
+**Plan for mexHID**
+
+Based on all this, I think I can improve the mexHID function of Snow Dots to squeeze more timing information out of HID devices on OS X.
+
+The big win should come from counting USB frames before and after synchronous behaviors. Since the USB frame clock should be the most relevant to USB transactions, this should provide the best bounds on when a transaction (and therefore a behavior) actually takes place, in the time frame of the host (which is the time frame of Snow Dots). This will involve: * Getting an IOUSB interface for each device (as opposed to an IOHID interface) * Surrounding some mexHID calls with frame counting * Figuring out a nice way to report the frame-time bounding to the user, maybe as extra outputs to from mexHID calls.
+
+A second win would be determining the origin of IOHIDValue timestamps. Are they equivalent to USB frame numbes? Are they equivalent to the correct frames? I can at least explore this, also with USB frame counting. I'm imagining a big timestamp sandwich as a first smell test: * GetSecs from Matlab * Synchronously get or set a HID element value with mexHID * Take my own "OS absolute time" timestamp * Read the current USB frame number, with timestamp * Read the IOHIDValue timestamp * Read the current USB frame number, with timestamp * Take another "OS absolute time" timestamp * GetSecs from Matlab
+
+My understanding is that GetSecs is also "OS absolute time". So all 6 of the outer timestamps be comparable. If the inner, IOHIDValue timestamp is roughly equal to any of the others, that's bad news because it would have been assigned at call time. If it's less than the others, it may have been assigned at frame time, which would be good.
+
+The sandwich would also just be a nice way to look at how long it takes to call into mexHID and do a USB transaction, both in time and number of frames.
+
+If timestamps look promising from synchronous get and set, then it would be worth checking what the timestamps look like from a queue callback. There would be no sense in counting frames here, but it would be good to see that the IOHIDValue timestamps are less than or obviously unequal to the timestamps I take at callback time.
+
+**Results**
+
+I have some first results. The tests are in a script that lives in the Snow Dots repository along with the mexHID code, so you can check it out here: svn checkout http://snow-dots.googlecode.com/svn/trunk/mex/mexHID/ mexHID-USBTiming
+
+For testing I used a USB ThinkPad keyboard-with-track-point. The tests assume there will be a similar "mouse usage" device connected to the machine, with an x-axis. It also assumes there wil be some output to write values to, such as an LED, and this is not true for all mouses/trackpads/etc.
+
+There are three tests (each gets its own figure).
+
+1
+
+Test 1 looks at latency seen from mexHID for reading and writing to device elements. Since input-type elements have their values cached on the host side, these operations are as fast as can be. This also turns out to be the case for reading the values of output-type elements. Writing to output-type elements requires a real bus transaction. Since mexHID does this synchronously, it encounters real latency.
+
+The left two panels show how long it took mexHID to accomplish reading and writing from different elements. Reading was instantanious, writing took time. Since I'm using a HID mouse, which is a low speed device, the USB frames are 1ms long and the latency is about 3-4 frames.
+
+The right panels don't care what operations were going on, they just compare USB frame numbers and timestamps, which are reported in pairs by the OS X USB API. With these 1ms frames, the frame numbers look a lot like timestamps rounded up to the nearest 1ms.
+
+2
+
+Test 2 attempts to compare timestamps from a few different operations: before and after writing a value, before and after reading the same value, and the timestamp reported by the USB API for the change in value. Ideally, the timestamps would go in the following order: * pre-write -> value change -> post-write -> pre-read -> post-read This would indicate that the host is able acknowledge the value change and hit it with a timestamp, even before it returns control to mexHID.
+
+If the value change and post-write timestamps were swapped, that might be OK too, since it would indicate that the host had acknowledged the value change and hit it with a timestamp before we asked it to read the value again: * pre-write -> post-write -> value change -> pre-read -> post-read In this case we would care more about the specific values of the middle three timestamps.
+
+However, this test doesn't work yet. Even though mexHID can read the value of an output element, the USB API does not put timestamps on these values. So it's meaningless to ask where the "value change" timestamp falls among the others.
+
+But we might be able to contrive a situation in which we could run a meaningful version of this test. We would need to wire the output of a device (like the USB 1208FS from Measurement Computing) into one of its inputs, and write and read from those two elements. The value of the input should change as soon we finish writing to the output, and we should observe the input value change with a timestamp.
+
+3
+
+Test 3 uses a queue, which is a convenience provided by the OS X USB API to collect value changes in the background and read them later. I add the x-axis element of my attached HID mouse (you probably have one of these, too) to a queue and I ask the user to keep moving the mouse so that the x-axis signal is constantly changing.
+
+The question is, how often does this constantly changing signal get updated? Is it every single USB frame (i.e. every 1ms). Looks like the answer is "no". On my ThinkVantage trackpoint keyboard, and on my Mac Book track pad, I only see value change timestamps in multiples of 8ms. I assume this corresponds to the "ReportInterval" of the devices, which is 8000, presumably in microseconds.
+
+So I probably just glossed over the report interval behavior in my reading of the USB 2.0 spec. One thing I don't understand is why the changes are not consistently 8ms apart. 8ms should be an easy deadline to meet. I guess the host checks with this period and if the value isn't ready to be read it doesn't bother checking until the next period.
+
+It would be nice to repeat this test with a faster device (like the USB 1208FS from Measurement Computing), to be convinced that mexHID really can observe value changes up to and including each USB frame.
+
+If it can observe changes on that time scale, it would be a strong suggestion that the OS X USB implementation really is hitting values with timestamps as soon as it acknowledges the value changes. If it's assigning timestamps at some other time, they might pile up so that some frames appear to have many value changes and others appear to have none. It would be good to observe one or the other.
+
+3.1
+
+I've updated test 3 to partially address the question from test 2 about how different timestamps line up.
+
+I use the same input queue as before, but now instead of just allowing the queue to update for a while, I also repeatedly write values to an output element. As in test 1, writing to outputs lasts for a few milliseconds. I also repeatedly pause for a few more milliseconds.
+
+I compare the timestamps for pre-write and post-write to the timestamps reported for each of the queued input value changes. If inputs are getting updated and hit with timestamps in a robust way, then some of the value-change timestamps should fall between consecutive pre-write and post-write timestamps. That is, they should happen "during" the write transaction. Other value-change timestamps should fall outside the pre-write-post-write range.
+
+This is what I see. So it seems that timestamps are robust and don't obviously depend on whether the USB host is busy with other transactions. So mexHID should be able to take advantage of this concurrency without worrying about how jittered the Matlab thread is.****

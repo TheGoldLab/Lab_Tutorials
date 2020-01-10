@@ -1,0 +1,72 @@
+I've been thinking about some design issues with Snow Dots. These generally fall in the category of 20/20 hindsight. I want to write them down and think about which of these are worth redesigning for future iterations.
+
+These are not really project "issues" in the sense of bugs or immediate problems. They're just worth thinking about.
+
+UDP vs. TCP
+Based on my own experience and some user feedback, it seems clear that pure UDP communication is not reliable. This is not really a surprise.
+
+In order to get better reliability and still enjoy low latency, I implemented message acknowledgement and re-sending for dotsTheMessenger. This helped. But it also took a chunk of time to develop and it's hard to troubleshoot and debug.
+
+Network communication is a solved problem. TCP is the most obvious alternative to UDP, which would provide reliability at the cost of higher latency. Since TCP already exists, it's probably not worth spending lots of time refining the error correction in dotsTheMessenger.
+
+So, then, is it worth spending time implementing a TCP version of dotsAllSocketObjects? This would be most helpful for rigs where network latency is not a big deal, or during task development.
+
+An easy solution for reliable networking is to isolate the rig machines from the local network. But this is a problem for development, since experimenters need to use the Internet.
+
+Queryable vs. Classifyable
+The dotsQueryable classes are too big. They implement two kinds of behaviors which should be accessible separately: * getting data from a hardware device * classifying data with n-dimensional rectangles.
+
+I want to break these apart. The combination of these behaviors should occur optionally, by aggregation, and not by inheritance.
+
+The family of Queryables can still have a common interface for tasks like initialization and updating data. But they won't impose the fancy classification scheme. It should be easy to create a Queryable and just ask it what's going on.
+
+Queryable should still be able to "track" events like button presses and report them only once. It would be nice if it could track other events, like axis threshold crossings.
+
+A Classifier should be a separate class. It should encapsulate the model for discrete, n-dimensional rectangles. It should be able to connect to a Queryable, or anything else, by aggregation or function call. For example, maybe it would have a getDataFunction which it can feval() in order to access data. Or, perhaps it should have one getDataFunction per dimension. Or, perhaps dotsFiniteDimension should have a getDataFunction property.
+
+One advantage of having a separate Classifier class is that various objects and kinds of inputs could participate in the classification. For example, inputs from a game pad and an eye tracker could be combined to read a result that depends on both types of data.
+
+This kind of classification would make the Classifier a natural for topsStateMachine state input functions. So it might makes sense to move Classifier out of Snow Dots and up to Tower of Psych.
+
+One payoff for Tower of Psych would be that the Classifier be used as input to states in topsStateMachine. Since the Classifier could report on its potential outputs, it would be easier to draw rich diagrams for topsStateMachine. It would also be easy to specify a classifier for each state.
+
+Non-Remote Managers
+As of October2011, dotsTheQueryablesManager is the only object manager which is not a remote object manager. It isn't doing much. The original intent was for this manager to manager things like singleton hardware classes. But this never came up, and if it does come up, it could be implemented by hardware classes themselves.
+
+Do right now, having to work with this manager adds nothing. I think it should be removed alltogether. This relates to the next design issue, about how to implement remote objects and manage them.
+
+Generic Remote Manager Instances
+It might be that managing multiple objects of the same family, like Drawables or Computables, is a different task from managing client-server behavior between two Matlab instances or machines.
+
+If this is the case, then it would be possible to organize client-server behavior in a more general way. There could be generic client and server stubs.
+
+The client machine could have multiple client stubs with user-given names. Each server machine could run a server-stub which listened for messages and carried out transactions.
+
+The client stubs would emphasize connecting to a machine, as opposed to connecting to a singleton. Maybe information about a machine could be stored in a machine-targeting .xml file with IP address and port info.
+
+Any managed object could be added to any stub. Since the stubs would exist as arbitrary instances and not singletons, the user would have to be very explicit about when they were asking for remote behaviors.
+
+A user would have to be more explicit about requesting remote behaviors. This would have some advantage, but it would break the idea of seamless switching between local and remote behaviors.
+
+That might be a good thing. It would allow users who don't care about remote behaviors to just use local objects and not have to encounter bugs which are a result of fancy under-the-hood behavior.
+
+Users who do care about remote behaviors could insulate their code from local or remote configurations by writing to client stubs which implement some kind of loop-back behavior.
+
+If the stubs had a good way to deal with remote object aggregation, then object managers could be added to a stub explicitly.
+
+Self-Delegation
+Snow Dots is designed to run within one or more instances of Matlab, based on a client-server model. Each remote object manager can toggle client behavior and server behavior independently, leading to four possible combinations.
+
+The heterogeneous combinations both make sense: a manager can be a client-but-not-a-server, or a server-but-not-a-client. These are complimentary. They allow Snow Dots to span multiple Matlab instances.
+
+One of the homogeneous combinations also makes sense. When running within a single Matlab instance, a manager can be neither-a-server-nor-a-client, in which case it just carries out function calls as a regular, local object.
+
+The other homogeneous combination is questionable. The both-a-client-and-a-server combination allows a manager to delegate behaviors to itself. The behavior is supposed to match that of a regular, local object, while also testing the client-server messaging and delegation code.
+
+But it turns out that this last combination is significantly different from any of the others. Because of the need for topsConcurrent concurrency as well as synchronous transactions, the behavior is not the same as the neither-a-server-nor-a-client combination. Because of shared operating system resources like sockets, it is not a good test of complimentary client-server behaviors.
+
+This combination requires extra code in order to smooth over these problems. It has the worst performance. It may cause confusion during configuration. So it might make sense to get rid of this combination.
+
+Maybe each manager should have one behavioral switch with three possibilities, instead of two switches with two possibilities each. Or, in order to leave the API unchanged, maybe neither-a-server-nor-a-client and both-a-client-and-a-server should be aliases for the same local object behavior.
+
+Here is a little summary: | | clientMode on | clientMode off | |:|:------------------|:-------------------| | serverMode on |questionable |compliments client behavior| | serverMode off |compliments server behavior|local objecty |
