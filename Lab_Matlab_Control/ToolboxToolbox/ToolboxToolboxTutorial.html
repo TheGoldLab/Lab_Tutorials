@@ -1,8 +1,315 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,IE=9,chrome=1"><meta name="generator" content="MATLAB R2018b"><title>Untitled</title><style type="text/css">.rtcContent { padding: 30px; } .S0 { margin: 2px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pre-wrap; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif; font-style: normal; font-size: 14px; font-weight: normal; text-align: left;  }</style></head><body><div class = rtcContent><div  class = 'S0'><span>Second Live Script Tutorial</span></div></div><br>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,IE=9,chrome=1"><meta name="generator" content="MATLAB R2018b"><title>Quick ToolboxToolbox Tutorial for the Gold Lab</title><style type="text/css">.rtcContent { padding: 30px; } .S0 { margin: 3px 10px 5px 4px; padding: 0px; line-height: 28.7999992370605px; min-height: 0px; white-space: pre-wrap; color: rgb(213, 80, 0); font-family: Helvetica, Arial, sans-serif; font-style: normal; font-size: 24px; font-weight: normal; text-align: left;  }
+.S1 { margin: 2px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pre-wrap; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif; font-style: normal; font-size: 14px; font-weight: normal; text-align: left;  }
+.S2 { margin: 20px 10px 5px 4px; padding: 0px; line-height: 20px; min-height: 0px; white-space: pre-wrap; color: rgb(60, 60, 60); font-family: Helvetica, Arial, sans-serif; font-style: normal; font-size: 20px; font-weight: bold; text-align: left;  }
+.S3 { margin: 15px 10px 5px 4px; padding: 0px; line-height: 18px; min-height: 0px; white-space: pre-wrap; color: rgb(60, 60, 60); font-family: Helvetica, Arial, sans-serif; font-style: normal; font-size: 17px; font-weight: bold; text-align: left;  }
+.CodeBlock { background-color: #F7F7F7; margin: 10px 0 10px 0;}
+.S4 { border-left: 1px solid rgb(233, 233, 233); border-right: 1px solid rgb(233, 233, 233); border-top: 1px solid rgb(233, 233, 233); border-bottom: 1px solid rgb(233, 233, 233); border-radius: 4px; padding: 6px 45px 4px 13px; line-height: 17.234001159668px; min-height: 18px; white-space: nowrap; color: rgb(0, 0, 0); font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 14px;  }
+.S5 { margin: 10px 10px 9px 4px; padding: 0px; line-height: 21px; min-height: 0px; white-space: pre-wrap; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif; font-style: normal; font-size: 14px; font-weight: normal; text-align: left;  }
+.S6 { border-left: 0px none rgb(0, 0, 0); border-right: 0px none rgb(0, 0, 0); border-top: 0px none rgb(0, 0, 0); border-bottom: 0px none rgb(0, 0, 0); border-radius: 0px; padding: 0px; line-height: 16px; min-height: 0px; white-space: pre; color: rgb(0, 0, 0); font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 12px;  }
+.S7 { margin: 10px 10px 5px 4px; padding: 0px; line-height: 18px; min-height: 0px; white-space: pre-wrap; color: rgb(60, 60, 60); font-family: Helvetica, Arial, sans-serif; font-style: normal; font-size: 15px; font-weight: bold; text-align: left;  }</style></head><body><div class = rtcContent><h1  class = 'S0'><span>Quick ToolboxToolbox Tutorial for the Gold Lab</span></h1><div  class = 'S1'><span>by Adrian Radillo, 13 Jan 2020</span></div><h2  class = 'S2'><span>What's ToolboxToolbox?</span></h2><div  class = 'S1'><span>ToolboxToolbox is a collection of MATLAB routines gathered in </span><a href = "https://github.com/ToolboxHub/ToolboxToolbox"><span>this GitHub repository</span></a><span>. Its aim is to automate the MATLAB Path setup on a project-by-project basis. I refer you to the readme page and the </span><a href = "https://github.com/ToolboxHub/ToolboxToolbox/wiki"><span>Wiki</span></a><span> for detailed info on its capabilities.</span></div><div  class = 'S1'><span>In the present tutorial, I will explain how an example MATLAB project from the Gold Lab may be set up with ToolboxToolbox.</span></div><h2  class = 'S2'><span>An example set-up in the Gold Lab</span></h2><h3  class = 'S3'><span>Installing ToolboxToolbox</span></h3><div  class = 'S1'><span>The first step is to install ToolboxToolbox on the machine from which you wish to develop your MATLAB code.</span></div><div  class = 'S1'><span>The standard way to install ToolboxToolbox is described in the following steps:</span></div><div  class = 'S1'><span>1/ Find out your MATLAB </span><span style=' font-family: monospace;'>userpath</span><span> by typing the following at the MATLAB console:</span></div><div class="CodeBlock"><div class="inlineWrapper"><div  class = 'S4'><span style="white-space: pre;"><span>userpath</span></span></div></div></div><div  class = 'S5'><span>2/ Clone ToolboxToolbox to your computer at the path returned by the </span><span style=' font-family: monospace;'>userpath</span><span> command above. If you wish to do this via a UNIX terminal, you may type the following at the command line (this assumes that </span><a href = "https://help.github.com/en/github/getting-started-with-github/set-up-git"><span>git is configured</span></a><span> on your computer):</span></div><div class = 'preformatted-plain' style = 'margin: 10px 3px 10px 55px; padding: 10px 10px 10px 5px; '><div  class = 'S6'><span style="white-space: pre;"><span>$ cd /path/to/your/matlab/userpath</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>$ git clone https://github.com/ToolboxHub/ToolboxToolbox.git</span></span></div></div><div  class = 'S1'><span>3/ If no </span><span style=' font-family: monospace;'>startup.m</span><span> file exists in your </span><span style=' font-family: monospace;'>userpath</span><span>, create one and paste onto it the contents from</span><a href = "https://github.com/ToolboxHub/ToolboxToolbox/blob/master/sampleStartup.m"><span> this example file</span></a><span>. If you already have a </span><span style=' font-family: monospace;'>startup.m</span><span> file and know what it does, then you should be able to understand what the </span><a href = "https://github.com/ToolboxHub/ToolboxToolbox/blob/master/sampleStartup.m"><span>example file</span></a><span> just mentioned does, and to fuse the two files in a way that makes sense for you.</span></div><div  class = 'S1'><span>At this point, ToolboxToolbox is installed on your computer. Congratulations! Every once in a while a new version is available on GitHub. To get it, simply use the </span><span style=' font-family: monospace;'>git pull</span><span> command. From the UNIX command line, for instance, you would do:</span></div><div class = 'preformatted-plain' style = 'margin: 10px 3px 10px 55px; padding: 10px 10px 10px 5px; '><div  class = 'S6'><span style="white-space: pre;"><span>$ cd /path/to/your/matlab/userpath/ToolboxToolbox</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>$ git pull</span></span></div></div><h3  class = 'S3'><span>Setting up a project to use ToolboxToolbox</span></h3><div  class = 'S1'><span>Now that ToolboxToolbox is installed on your computer, you might notice that at MATLAB startup, MATLAB's path is reset to factory state, and ToolboxToolbox is added to the path. This is what ToolboxToolbox does with its default settings. This behavior may be changed in the </span><span style=' font-family: monospace;'>startup.m</span><span> file, but this falls out of the scope of the present tutorial.</span></div><div  class = 'S1'><span>The example project that we will work with for now is a GitHub repository named </span><a href = "https://github.com/TheGoldLab/Lab_TestRepository"><span>Lab_TestRepository</span></a><span>. Note that ToolboxToolbox is particularly well suited for GitHub-hosted projects. Although we won't cover this here, it can also work with </span><a href = "https://github.com/ToolboxHub/ToolboxToolbox/wiki/Toolbox-Records-and-Types"><span>non-git projects</span></a><span>.</span></div><div  class = 'S1'><span>A key distinction operated within ToolboxToolbox is the one between </span><a href = "https://github.com/ToolboxHub/ToolboxToolbox/wiki/Working-with-Toolboxes-and-Projects"><span>projects and toolboxes</span></a><span>. Both a </span><span style=' font-family: monospace;'>project</span><span> and a </span><span style=' font-family: monospace;'>toolbox</span><span> are folders that can be added to the MATLAB Path. However, </span><span style=' font-family: monospace;'>projects</span><span> are folders that you are frequently modifying (because you are developing the code they contain for instance), whereas </span><span style=' font-family: monospace;'>toolboxes</span><span> are folders that you (almost) never manually edit. For ToolboxToolbox, our </span><span style=' font-family: monospace;'>Lab_TestRepository</span><span> folder will be a </span><span style=' font-family: monospace;'>project</span><span> because it represents the MATLAB project that we want to work on at the moment. As such, it is convenient to place/clone it into the default location for ToolboxToolbox projects, which is the '</span><span style=' font-family: monospace;'>projects/</span><span>' folder located in your </span><span style=' font-family: monospace;'>userpath</span><span> folder. I recommend you create this folder (and the 'toolboxes/' folder too) if it doesn't exist. Here is the code to do this, and clone our project from the command line.</span></div><div class = 'preformatted-plain' style = 'margin: 10px 3px 10px 55px; padding: 10px 10px 10px 5px; '><div  class = 'S6'><span style="white-space: pre;"><span>$ cd /path/to/your/matlab/userpath</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>$ mkdir -p projects toolboxes  # the -p means "only create the folders if they don't exist"</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>$ cd projects</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>$ git clone https://github.com/TheGoldLab/Lab_TestRepository.git</span></span></div></div><div  class = 'S1'><span>What makes our </span><span style=' font-family: monospace;'>Lab_TestRepository</span><span> folder a ToolboxToolbox </span><span style=' font-family: monospace;'>project</span><span> is both the fact that it lives in the '</span><span style=' font-family: monospace;'>projects</span><span>/' folder and that somewhere in its subfolders lies a file named 'Lab_TestRepository.json' with the appropriate configuration content. Note that the file name should match the folder name. In our case, the </span><span style=' font-family: monospace;'>.json</span><span> file lives in </span><span style=' font-family: monospace;'>Lab_TestRepository/dummy_folder1/dummy_folder2/Lab_TestRepository.json</span><span> and its content is:</span></div><div class = 'preformatted-plain' style = 'margin: 10px 3px 10px 55px; padding: 10px 10px 10px 5px; '><div  class = 'S6'><span style="white-space: pre;"><span>[</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    {</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>       	"name": "Lab_TestRepository",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>        "type": "git",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>        "url": "https://github.com/TheGoldLab/Lab_TestRepository.git",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>        "update": "never"</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    },</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    {	</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>        "name": "Task_SingleCP_DotsReversal",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>        "type": "git",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>        "url": "https://github.com/TheGoldLab/Task_SingleCP_DotsReversal.git",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>        "update": "never",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>        "toolboxRoot": "#Task_SingleCP_DotsReversal"</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    },</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    {</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>	"name": "Lab_Matlab_Control",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>	"type": "git",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>        "flavor": "v1.0",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>	"url": "https://github.com/TheGoldLab/Lab_Matlab_Control.git"</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    },</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    {</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>	"name": "Lab_Matlab_Utilities",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>	"type": "include"</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    },</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    {</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>	"name": "mgl",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>	"type": "git",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>	"url": "https://github.com/justingardner/mgl.git"</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    },</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    {  </span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>	"name": "mQUESTPlus",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>	"type": "include"</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    }</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>]</span></span></div></div><div  class = 'S1'><span>We notice that there are 6 JSON cells in this file. The two compulsory fields in every cell are "name" and "type". The "name" field should be the name of the folder that will be added (with its subfolders) to the MATLAB path whenever the present project is used with ToolboxToolbox. Let me remind you here that, with the default settings, such folders should be placed in the '</span><span style=' font-family: monospace;'>projects</span><span>/' or in the '</span><span style=' font-family: monospace;'>toolboxes</span><span>/' folders. Furthermore, it is good practice not to create any folder yourself in the '</span><span style=' font-family: monospace;'>toolboxes</span><span>/' folder. ToolboxToolbox is smart enough to update (with a </span><span style=' font-family: monospace;'>pull</span><span> from GitHub for instance) the contents of the toolbox if the folder already exists, and to create the folder (with a </span><span style=' font-family: monospace;'>clone</span><span> from GitHub) if it doesn't exist. With projects, I recommend that you manually clone your repos and set them to the appropriate </span><span style=' font-family: monospace;'>branch</span><span> yourself (if you use </span><a href = "https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell"><span>git branches</span></a><span>).</span></div><div  class = 'S1'><span>Now, let's explain the cells from the </span><span style=' font-family: monospace;'>.json</span><span> file one by one. The first cell is:</span></div><div class = 'preformatted-plain' style = 'margin: 10px 3px 10px 55px; padding: 10px 10px 10px 5px; '><div  class = 'S6'><span style="white-space: pre;"><span>{</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "name": "Lab_TestRepository",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "type": "git",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "url": "https://github.com/TheGoldLab/Lab_TestRepository.git",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "update": "never"</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>}</span></span></div></div><div  class = 'S1'><span>The first cell should always be a self-reference to the project. The "name" field is set to "Lab_TestRepository" because this is the name of the folder (within '</span><span style=' font-family: monospace;'>projects</span><span>/') that contains my present project. The field "type" is set to "git" because this is a git-managed project. The field "url" is set to the GitHub URL of the project (this way, if I ask ToolboxToolbox to update this project, it will do so from that URL). Finally, the "update" field is set to "never" because I usually avoid automatic update of my ToolboxToolbox projects. The reason for this is that I often develop my code from several computers, and usually have several branches in each git project, and forbidding ToolboxToolbox update is the easiest way to set my local repository into the state I want them to be. </span></div><h4  class = 'S7'><span>Advanced remarks on branches</span></h4><div  class = 'S1'><span>Let's be more explicit about the last point. You may notice that our Lab_TestRepository has the three branches </span><span style=' font-family: monospace;'>dev</span><span>, </span><span style=' font-family: monospace;'>github</span><span> and </span><span style=' font-family: monospace;'>master</span><span>. If I wish to work on the </span><span style=' font-family: monospace;'>dev</span><span> branch, all I need to do is set my repo to that branch</span></div><div class = 'preformatted-plain' style = 'margin: 10px 3px 10px 55px; padding: 10px 10px 10px 5px; '><div  class = 'S6'><span style="white-space: pre;"><span>$ cd /path/to/your/matlab/userpath/projects/Lab_TestRepository</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>$ git status  # make sure your working directory is clean</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>$ git checkout dev</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>$ git pull    # assuming you want the latest version of that branch from GitHub</span></span></div></div><div  class = 'S1'><span> and call </span><span style=' font-family: monospace;'>tbUseProject('Lab_TestRepository')</span><span> from MATLAB. If, later on, I wish to fall back to the </span><span style=' font-family: monospace;'>master</span><span> branch, I simply revert back to it:</span></div><div class = 'preformatted-plain' style = 'margin: 10px 3px 10px 55px; padding: 10px 10px 10px 5px; '><div  class = 'S6'><span style="white-space: pre;"><span>$ git status  # make sure your working directory is clean</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>$ git checkout master</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>$ git pull    # assuming you want the latest version of that branch from GitHub</span></span></div></div><div  class = 'S1'><span>and I can call again </span><span style=' font-family: monospace;'>tbUseProject('Lab_TestRepository')</span><span> from MATLAB.</span></div><div  class = 'S1'><span>As a rule of thumb, if the "update" field of the ToolboxToolbox configuration for a project is set to "never", then ToolboxToolbox won't even attempt a </span><span style=' font-family: monospace;'>git pull</span><span> on your project. If the "update" field is left blank or is missing, ToolboxToolbox will attempt a </span><span style=' font-family: monospace;'>git pull</span><span> from your project, regardless of the branch it is on.</span></div><div  class = 'S1'><span></span></div><div  class = 'S1'><span>The second cell from our </span><span style=' font-family: monospace;'>.json</span><span> file is:</span></div><div class = 'preformatted-plain' style = 'margin: 10px 3px 10px 55px; padding: 10px 10px 10px 5px; '><div  class = 'S6'><span style="white-space: pre;"><span>{	</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "name": "Task_SingleCP_DotsReversal",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "type": "git",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "url": "https://github.com/TheGoldLab/Task_SingleCP_DotsReversal.git",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "update": "never",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "toolboxRoot": "#Task_SingleCP_DotsReversal"</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>}</span></span></div></div><div  class = 'S1'><span>This cell is a good example of how to set an other ToolboxToolbox project as a dependency to your current ToolboxToolbox project. Here, I assume that I have already cloned the project </span><span style=' font-family: monospace;'>Task_SingleCP_DotsReversal</span><span> from GitHub into my '</span><span style=' font-family: monospace;'>projects/</span><span>' folder and set it to the state I want (i.e. a specific git branch, if needed). The only new field, compared to the first cell, is the "toolboxRoot" field, which is set to "#Task_SingleCP_DotsReversal". This setting let's ToolboxToolbox know that the folder (and its subfolders) that should be added to the MATLAB path lives in "projects/Task_SingleCP_DotsReversal". If you don't specify this field, ToolboxToolbox will treat the whole configuration cell as a </span><span style=' font-family: monospace;'>toolbox</span><span> instead of a </span><span style=' font-family: monospace;'>project</span><span>, and thus clone the GitHub repo into your '</span><span style=' font-family: monospace;'>toolboxes/</span><span>' folder. </span></div><div  class = 'S1'><span></span></div><div  class = 'S1'><span>The third cell is:</span></div><div class = 'preformatted-plain' style = 'margin: 10px 3px 10px 55px; padding: 10px 10px 10px 5px; '><div  class = 'S6'><span style="white-space: pre;"><span>{</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "name": "Lab_Matlab_Control",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "type": "git",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "flavor": "v1.0",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "url": "https://github.com/TheGoldLab/Lab_Matlab_Control.git"</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>}</span></span></div></div><div  class = 'S1'><span>The interesting new field it contains is "flavor". You may set this field to any string that can be provided as argument to the '</span><span style=' font-family: monospace;'>git checkout</span><span>' command. Thus, you can provide any </span><a href = "https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddeftree-ishatree-ishalsotreeish"><span>tree-ish</span></a><span>. Most commonly, I use either a branch name, the first few characters of a commit number, or a tag name (i.e. a Release name). In our present example, the "flavor" field is set to "v1.0", which is both a tag and a </span><a href = "https://github.com/TheGoldLab/Lab_Matlab_Control/releases/tag/v1.0"><span>particular release of the Lab_Matlab_Control toolbox</span></a><span>. Because no "toolboxRoot" field appears for this dependency, ToolboxToolbox will interpret the dependency as a </span><span style=' font-family: monospace;'>toolbox</span><span> and look for it (or clone it) in the </span><span style=' font-family: monospace;'>toolboxes</span><span>/ folder. Furthermore, because we have specified a </span><span style=' font-family: monospace;'>flavor</span><span>, the folder name will have the string "v1.0" appended to its name. So, the actual folder (and its subfolders) that will be added to my MATLAB path upon calling ToolboxToolbox for my Lab_TestRepository project will be "</span><span style=' font-family: monospace;'>/path/to/your/matlab/userpath/toolboxes/Lab_Matlab_Control_v1.0/</span><span>". As one should expect, ToolboxToolbox will make sure that the aforementioned folder is set to the "v1.0" release state (by calling "</span><span style=' font-family: monospace;'>git</span><span> </span><span style=' font-family: monospace;'>checkout</span><span> </span><span style=' font-family: monospace;'>v1.0</span><span>").</span></div><div  class = 'S1'><span></span></div><div  class = 'S1'><span>Cells 4 and 6 are very similar, so I will treat them together.</span></div><div class = 'preformatted-plain' style = 'margin: 10px 3px 10px 55px; padding: 10px 10px 10px 5px; '><div  class = 'S6'><span style="white-space: pre;"><span>{</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "name": "Lab_Matlab_Utilities",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "type": "include"</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>},</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>{  </span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "name": "mQUESTPlus",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "type": "include"</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>}</span></span></div></div><div  class = 'S1'><span>Notice that the "type" field is now set to "include" as opposed to "git". This triggers a particular behavior in ToolboxToolbox. Namely, ToolboxToolbox will fetch the settings for these toolboxes from the publicly available online </span><a href = "https://github.com/ToolboxHub/ToolboxRegistry"><span>ToolboxRegistry</span></a><span>. You can see for yourself what the settings for </span><a href = "https://github.com/ToolboxHub/ToolboxRegistry/blob/master/configurations/Lab_Matlab_Utilities.json"><span>Lab_Matlab_Utilities</span></a><span> and </span><a href = "https://github.com/ToolboxHub/ToolboxRegistry/blob/master/configurations/mQUESTPlus.json"><span>mQUESTPlus</span></a><span> are. Notice how having these settings directly hosted on the public registry simplifies the syntax. No other field is required in our </span><span style=' font-family: monospace;'>.json</span><span> file. What is more, if any of these toolboxes had required additional dependencies, these would have been listed in the ToolboxRegistry, and ToolboxToolbox would have fetched them automatically for us. The "include" feature is thus very powerful for projects with nested dependencies. As a rule of thumb, always use the type "include" when using a toolbox from the ToolboxRegistry. You may also add your own toolboxes to this registry as explained in the </span><a href = "https://github.com/ToolboxHub/ToolboxRegistry/blob/master/README.md"><span>README</span></a><span>.</span></div><div  class = 'S1'><span></span></div><div  class = 'S1'><span>Finally cell 5 is:</span></div><div class = 'preformatted-plain' style = 'margin: 10px 3px 10px 55px; padding: 10px 10px 10px 5px; '><div  class = 'S6'><span style="white-space: pre;"><span>{</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "name": "mgl",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "type": "git",</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>    "url": "https://github.com/justingardner/mgl.git"</span></span></div><div  class = 'S6'><span style="white-space: pre;"><span>}</span></span></div></div><div  class = 'S1'><span>It contains no unknown field to us. Upon seeing this dependency setting, ToolboxToolbox will attempt to go to "</span><span style=' font-family: monospace;'>/path/to/your/matlab/userpath/toolboxes/mgl/</span><span>". If the folder exists, it will then call "</span><span style=' font-family: monospace;'>git pull</span><span>" from within it. If it doesn't, it will call "</span><span style=' font-family: monospace;'>git clone https://github.com/justingardner/mgl.git</span><span>" from </span><span style=' font-family: monospace;'>/path/to/your/matlab/userpath/toolboxes/.</span></div><div  class = 'S1'><span></span></div><div  class = 'S1'><span>By now, hopefully, you understand how the ToolboxToolbox </span><span style=' font-family: monospace;'>.json</span><span> project configuration file works. All that remains to do to set your MATLAB path as you want it for your "Lab_TestRepository" project is to call from the MATLAB console:</span></div><div class="CodeBlock"><div class="inlineWrapper"><div  class = 'S4'><span style="white-space: pre;"><span>tbUseProject(</span><span style="color: rgb(160, 32, 240);">'Lab_TestRepository'</span><span>)</span></span></div></div></div></div><br>
 <!-- 
 ##### SOURCE BEGIN #####
+%% Quick ToolboxToolbox Tutorial for the Gold Lab
+% by Adrian Radillo, 13 Jan 2020
+%% What's ToolboxToolbox?
+% ToolboxToolbox is a collection of MATLAB routines gathered in <https://github.com/ToolboxHub/ToolboxToolbox 
+% this GitHub repository>. Its aim is to automate the MATLAB Path setup on a project-by-project 
+% basis. I refer you to the readme page and the <https://github.com/ToolboxHub/ToolboxToolbox/wiki 
+% Wiki> for detailed info on its capabilities.
+% 
+% In the present tutorial, I will explain how an example MATLAB project from 
+% the Gold Lab may be set up with ToolboxToolbox.
+%% An example set-up in the Gold Lab
+%% Installing ToolboxToolbox
+% The first step is to install ToolboxToolbox on the machine from which you 
+% wish to develop your MATLAB code.
+% 
+% The standard way to install ToolboxToolbox is described in the following 
+% steps:
+% 
+% 1/ Find out your MATLAB |userpath| by typing the following at the MATLAB 
+% console:
+
+userpath
 %% 
-% Second Live Script Tutorial
+% 2/ Clone ToolboxToolbox to your computer at the path returned by the |userpath| 
+% command above. If you wish to do this via a UNIX terminal, you may type the 
+% following at the command line (this assumes that <https://help.github.com/en/github/getting-started-with-github/set-up-git 
+% git is configured> on your computer):
+%%
+% 
+%  $ cd /path/to/your/matlab/userpath
+%  $ git clone https://github.com/ToolboxHub/ToolboxToolbox.git
+%
+% 
+% 3/ If no |startup.m| file exists in your |userpath|, create one and paste 
+% onto it the contents from<https://github.com/ToolboxHub/ToolboxToolbox/blob/master/sampleStartup.m  
+% this example file>. If you already have a |startup.m| file and know what it 
+% does, then you should be able to understand what the <https://github.com/ToolboxHub/ToolboxToolbox/blob/master/sampleStartup.m 
+% example file> just mentioned does, and to fuse the two files in a way that makes 
+% sense for you.
+% 
+% At this point, ToolboxToolbox is installed on your computer. Congratulations! 
+% Every once in a while a new version is available on GitHub. To get it, simply 
+% use the |git pull| command. From the UNIX command line, for instance, you would 
+% do:
+%%
+% 
+%  $ cd /path/to/your/matlab/userpath/ToolboxToolbox
+%  $ git pull
+%
+%% Setting up a project to use ToolboxToolbox
+% Now that ToolboxToolbox is installed on your computer, you might notice that 
+% at MATLAB startup, MATLAB's path is reset to factory state, and ToolboxToolbox 
+% is added to the path. This is what ToolboxToolbox does with its default settings. 
+% This behavior may be changed in the |startup.m| file, but this falls out of 
+% the scope of the present tutorial.
+% 
+% The example project that we will work with for now is a GitHub repository 
+% named <https://github.com/TheGoldLab/Lab_TestRepository Lab_TestRepository>. 
+% Note that ToolboxToolbox is particularly well suited for GitHub-hosted projects. 
+% Although we won't cover this here, it can also work with <https://github.com/ToolboxHub/ToolboxToolbox/wiki/Toolbox-Records-and-Types 
+% non-git projects>.
+% 
+% A key distinction operated within ToolboxToolbox is the one between <https://github.com/ToolboxHub/ToolboxToolbox/wiki/Working-with-Toolboxes-and-Projects 
+% projects and toolboxes>. Both a |project| and a |toolbox| are folders that can 
+% be added to the MATLAB Path. However, |projects| are folders that you are frequently 
+% modifying (because you are developing the code they contain for instance), whereas 
+% |toolboxes| are folders that you (almost) never manually edit. For ToolboxToolbox, 
+% our |Lab_TestRepository| folder will be a |project| because it represents the 
+% MATLAB project that we want to work on at the moment. As such, it is convenient 
+% to place/clone it into the default location for ToolboxToolbox projects, which 
+% is the '|projects/|' folder located in your |userpath| folder. I recommend you 
+% create this folder (and the 'toolboxes/' folder too) if it doesn't exist. Here 
+% is the code to do this, and clone our project from the command line.
+%%
+% 
+%  $ cd /path/to/your/matlab/userpath
+%  $ mkdir -p projects toolboxes  # the -p means "only create the folders if they don't exist"
+%  $ cd projects
+%  $ git clone https://github.com/TheGoldLab/Lab_TestRepository.git
+%
+% 
+% What makes our |Lab_TestRepository| folder a ToolboxToolbox |project| is 
+% both the fact that it lives in the '|projects|/' folder and that somewhere in 
+% its subfolders lies a file named 'Lab_TestRepository.json' with the appropriate 
+% configuration content. Note that the file name should match the folder name. 
+% In our case, the |.json| file lives in |Lab_TestRepository/dummy_folder1/dummy_folder2/Lab_TestRepository.json| 
+% and its content is:
+%%
+% 
+%  [
+%      {
+%         	"name": "Lab_TestRepository",
+%          "type": "git",
+%          "url": "https://github.com/TheGoldLab/Lab_TestRepository.git",
+%          "update": "never"
+%      },
+%      {	
+%          "name": "Task_SingleCP_DotsReversal",
+%          "type": "git",
+%          "url": "https://github.com/TheGoldLab/Task_SingleCP_DotsReversal.git",
+%          "update": "never",
+%          "toolboxRoot": "#Task_SingleCP_DotsReversal"
+%      },
+%      {
+%  	"name": "Lab_Matlab_Control",
+%  	"type": "git",
+%          "flavor": "v1.0",
+%  	"url": "https://github.com/TheGoldLab/Lab_Matlab_Control.git"
+%      },
+%      {
+%  	"name": "Lab_Matlab_Utilities",
+%  	"type": "include"
+%      },
+%      {
+%  	"name": "mgl",
+%  	"type": "git",
+%  	"url": "https://github.com/justingardner/mgl.git"
+%      },
+%      {  
+%  	"name": "mQUESTPlus",
+%  	"type": "include"
+%      }
+%  ]
+%
+% 
+% We notice that there are 6 JSON cells in this file. The two compulsory 
+% fields in every cell are "name" and "type". The "name" field should be the name 
+% of the folder that will be added (with its subfolders) to the MATLAB path whenever 
+% the present project is used with ToolboxToolbox. Let me remind you here that, 
+% with the default settings, such folders should be placed in the '|projects|/' 
+% or in the '|toolboxes|/' folders. Furthermore, it is good practice not to create 
+% any folder yourself in the '|toolboxes|/' folder. ToolboxToolbox is smart enough 
+% to update (with a |pull| from GitHub for instance) the contents of the toolbox 
+% if the folder already exists, and to create the folder (with a |clone| from 
+% GitHub) if it doesn't exist. With projects, I recommend that you manually clone 
+% your repos and set them to the appropriate |branch| yourself (if you use <https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell 
+% git branches>).
+% 
+% Now, let's explain the cells from the |.json| file one by one. The first 
+% cell is:
+%%
+% 
+%  {
+%      "name": "Lab_TestRepository",
+%      "type": "git",
+%      "url": "https://github.com/TheGoldLab/Lab_TestRepository.git",
+%      "update": "never"
+%  }
+%
+% 
+% The first cell should always be a self-reference to the project. The "name" 
+% field is set to "Lab_TestRepository" because this is the name of the folder 
+% (within '|projects|/') that contains my present project. The field "type" is 
+% set to "git" because this is a git-managed project. The field "url" is set to 
+% the GitHub URL of the project (this way, if I ask ToolboxToolbox to update this 
+% project, it will do so from that URL). Finally, the "update" field is set to 
+% "never" because I usually avoid automatic update of my ToolboxToolbox projects. 
+% The reason for this is that I often develop my code from several computers, 
+% and usually have several branches in each git project, and forbidding ToolboxToolbox 
+% update is the easiest way to set my local repository into the state I want them 
+% to be. 
+%% Advanced remarks on branches
+% Let's be more explicit about the last point. You may notice that our Lab_TestRepository 
+% has the three branches |dev|, |github| and |master|. If I wish to work on the 
+% |dev| branch, all I need to do is set my repo to that branch
+%%
+% 
+%  $ cd /path/to/your/matlab/userpath/projects/Lab_TestRepository
+%  $ git status  # make sure your working directory is clean
+%  $ git checkout dev
+%  $ git pull    # assuming you want the latest version of that branch from GitHub
+%
+% 
+%  and call |tbUseProject('Lab_TestRepository')| from MATLAB. If, later on, 
+% I wish to fall back to the |master| branch, I simply revert back to it:
+%%
+% 
+%  $ git status  # make sure your working directory is clean
+%  $ git checkout master
+%  $ git pull    # assuming you want the latest version of that branch from GitHub
+%
+% 
+% and I can call again |tbUseProject('Lab_TestRepository')| from MATLAB.
+% 
+% As a rule of thumb, if the "update" field of the ToolboxToolbox configuration 
+% for a project is set to "never", then ToolboxToolbox won't even attempt a |git 
+% pull| on your project. If the "update" field is left blank or is missing, ToolboxToolbox 
+% will attempt a |git pull| from your project, regardless of the branch it is 
+% on.
+% 
+% 
+% 
+% The second cell from our |.json| file is:
+%%
+% 
+%  {	
+%      "name": "Task_SingleCP_DotsReversal",
+%      "type": "git",
+%      "url": "https://github.com/TheGoldLab/Task_SingleCP_DotsReversal.git",
+%      "update": "never",
+%      "toolboxRoot": "#Task_SingleCP_DotsReversal"
+%  }
+%
+% 
+% This cell is a good example of how to set an other ToolboxToolbox project 
+% as a dependency to your current ToolboxToolbox project. Here, I assume that 
+% I have already cloned the project |Task_SingleCP_DotsReversal| from GitHub into 
+% my '|projects/|' folder and set it to the state I want (i.e. a specific git 
+% branch, if needed). The only new field, compared to the first cell, is the "toolboxRoot" 
+% field, which is set to "#Task_SingleCP_DotsReversal". This setting let's ToolboxToolbox 
+% know that the folder (and its subfolders) that should be added to the MATLAB 
+% path lives in "projects/Task_SingleCP_DotsReversal". If you don't specify this 
+% field, ToolboxToolbox will treat the whole configuration cell as a |toolbox| 
+% instead of a |project|, and thus clone the GitHub repo into your '|toolboxes/|' 
+% folder. 
+% 
+% 
+% 
+% The third cell is:
+%%
+% 
+%  {
+%      "name": "Lab_Matlab_Control",
+%      "type": "git",
+%      "flavor": "v1.0",
+%      "url": "https://github.com/TheGoldLab/Lab_Matlab_Control.git"
+%  }
+%
+% 
+% The interesting new field it contains is "flavor". You may set this field 
+% to any string that can be provided as argument to the '|git checkout|' command. 
+% Thus, you can provide any <https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddeftree-ishatree-ishalsotreeish 
+% tree-ish>. Most commonly, I use either a branch name, the first few characters 
+% of a commit number, or a tag name (i.e. a Release name). In our present example, 
+% the "flavor" field is set to "v1.0", which is both a tag and a <https://github.com/TheGoldLab/Lab_Matlab_Control/releases/tag/v1.0 
+% particular release of the Lab_Matlab_Control toolbox>. Because no "toolboxRoot" 
+% field appears for this dependency, ToolboxToolbox will interpret the dependency 
+% as a |toolbox| and look for it (or clone it) in the |toolboxes|/ folder. Furthermore, 
+% because we have specified a |flavor|, the folder name will have the string "v1.0" 
+% appended to its name. So, the actual folder (and its subfolders) that will be 
+% added to my MATLAB path upon calling ToolboxToolbox for my Lab_TestRepository 
+% project will be "|/path/to/your/matlab/userpath/toolboxes/Lab_Matlab_Control_v1.0/|". 
+% As one should expect, ToolboxToolbox will make sure that the aforementioned 
+% folder is set to the "v1.0" release state (by calling "|git| |checkout| |v1.0|").
+% 
+% 
+% 
+% Cells 4 and 6 are very similar, so I will treat them together.
+%%
+% 
+%  {
+%      "name": "Lab_Matlab_Utilities",
+%      "type": "include"
+%  },
+%  {  
+%      "name": "mQUESTPlus",
+%      "type": "include"
+%  }
+%
+% 
+% Notice that the "type" field is now set to "include" as opposed to "git". 
+% This triggers a particular behavior in ToolboxToolbox. Namely, ToolboxToolbox 
+% will fetch the settings for these toolboxes from the publicly available online 
+% <https://github.com/ToolboxHub/ToolboxRegistry ToolboxRegistry>. You can see 
+% for yourself what the settings for <https://github.com/ToolboxHub/ToolboxRegistry/blob/master/configurations/Lab_Matlab_Utilities.json 
+% Lab_Matlab_Utilities> and <https://github.com/ToolboxHub/ToolboxRegistry/blob/master/configurations/mQUESTPlus.json 
+% mQUESTPlus> are. Notice how having these settings directly hosted on the public 
+% registry simplifies the syntax. No other field is required in our |.json| file. 
+% What is more, if any of these toolboxes had required additional dependencies, 
+% these would have been listed in the ToolboxRegistry, and ToolboxToolbox would 
+% have fetched them automatically for us. The "include" feature is thus very powerful 
+% for projects with nested dependencies. As a rule of thumb, always use the type 
+% "include" when using a toolbox from the ToolboxRegistry. You may also add your 
+% own toolboxes to this registry as explained in the <https://github.com/ToolboxHub/ToolboxRegistry/blob/master/README.md 
+% README>.
+% 
+% 
+% 
+% Finally cell 5 is:
+%%
+% 
+%  {
+%      "name": "mgl",
+%      "type": "git",
+%      "url": "https://github.com/justingardner/mgl.git"
+%  }
+%
+% 
+% It contains no unknown field to us. Upon seeing this dependency setting, 
+% ToolboxToolbox will attempt to go to "|/path/to/your/matlab/userpath/toolboxes/mgl/|". 
+% If the folder exists, it will then call "|git pull|" from within it. If it doesn't, 
+% it will call "|git clone https://github.com/justingardner/mgl.git|" from |/path/to/your/matlab/userpath/toolboxes/.|
+% 
+% 
+% 
+% By now, hopefully, you understand how the ToolboxToolbox |.json| project 
+% configuration file works. All that remains to do to set your MATLAB path as 
+% you want it for your "Lab_TestRepository" project is to call from the MATLAB 
+% console:
+
+tbUseProject('Lab_TestRepository')
 ##### SOURCE END #####
 --></body></html>
