@@ -1,0 +1,281 @@
+
+    <html>
+      <head>
+        <title>Building-a-sample-experiment-Part-1-Displaying-Text-on-Screen</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body>
+        <div id='content'>
+    <p><strong>Building a sample experiment.</strong></p>
+<p><em>Part 1</em></p>
+<p>In order to construct a practical experiment, a basic understanding of Tower of Psych and Snow dots is required.</p>
+<p>While there are many elements of each that need to be used to develop a fully functioning experiment, it is best to start with just learning how to present something on screen.</p>
+<p>The start of this tutorial will primarily focus on using various aspects of Snow Dots, with some simple elements from Tower of Psych used to organize the presentation.</p>
+<p>To begin we will use a slightly modified version of the <a href="https://github.com/TheGoldLab/Lab-Matlab-Control/blob/master/snow-dots/demos/drawable/demoDrawableText.m">demoDrawableText.m</a> file located in the demo folder of Snow Dots. You should copy and paste the code at the bottom of this page into a new file and run that to follow along. </p>
+<p>The first block is establishing the function name with one input argument. In this example the delay argument is the amount of time the experiment will pause while the text is on screen.</p>
+<pre><code>function moddedDrawableText(delay)
+</code></pre>
+<p>If no argument is given when the function is called, the delay will default to 2 seconds.</p>
+<pre><code>if nargin &lt; 1
+    delay = 2;
+end
+</code></pre>
+<p>When using a Snow Dots class you must first create an object and assign it to a Snow Dots class that exists. We will now create two drawable text objects and then input some property values. </p>
+<pre><code>tx = dotsDrawableText();
+tx2 = dotsDrawableText();
+</code></pre>
+<p>When creating an object, assigning property values works like a structure in Matlab. The property values for different Snow Dots classes are defined in the Properties section of their respective Matlab files.  In the next block we are simply passing along to Matlab what we want the two text strings to say and what color we want them to be.</p>
+<pre><code>tx.string = 'Juniper juice';
+tx2.string = 'hello';
+tx.color = [0 128 64];
+tx2.color = [250 25 250];
+</code></pre>
+<p>In order for Snow Dots to present anything on screen a drawing window must be open.  The block below is simply opening up a blank screen for Snow Dots to 'draw' on.  This relies on a method within dotsTheScreen to do so. There are more details and options for setting up the Screen, but for now the default configuration should suffice. The first line is simply opening a black drawing window.</p>
+<pre><code>dotsTheScreen.openWindow();
+</code></pre>
+<p>The next block is using a method from dotsDrawable, the super class for all Snow Dots drawables, to present the newly created text objects. The pause line is a built-in Matlab function.</p>
+<pre><code>dotsDrawable.drawFrame({tx});
+pause(delay)
+dotsDrawable.drawFrame({tx2});
+pause(delay)
+</code></pre>
+<p>Classes like dotsDrawableText also inherit properties from their respective super classes. In this case, dotsDrawableText objects can also be manipulated using properties from dotsDrawable. In this case dotsDrawable only has one property "is Visible".  The default value is True.  However, if we set this value to false for a particular object, it will no long appear when called.</p>
+<pre><code>tx.isVisible = false;
+dotsDrawable.drawFrame({tx});
+pause(delay)
+</code></pre>
+<p>If we wanted both text objects to appear on screen at the same time we could pass both objects to drawFrame in a cell. In this case, the text objects will overlap since the default values of x and y are 0. We will move the first text object up a few units.</p>
+<pre><code>tx.isVisible = true;
+tx.y = 4
+dotsDrawable.drawFrame({tx tx2});
+pause(delay);
+</code></pre>
+<p>This final block is simply closing the drawing window. If you accidentally run a script without a call to close the screen or it crashes but doesn't exit the drawing window you can type in the below code to exit out. mglClose() will also work.</p>
+<pre><code>dotsTheScreen.closeWindow();
+</code></pre>
+<hr />
+<pre><code>function moddedDrawableText(delay)
+
+if nargin &lt; 1
+delay = 2;
+end
+
+tx = dotsDrawableText();
+tx2 = dotsDrawableText();
+
+tx.string = 'Juniper juice';
+tx2.string = 'hello';
+
+tx.color = [0 128 64];
+tx2.color = [250 25 250];
+
+dotsTheScreen.openWindow();
+
+dotsDrawable.drawFrame({tx});
+pause(delay)
+
+dotsDrawable.drawFrame({tx2});
+pause(delay)
+
+tx.isVisible = false;
+
+dotsDrawable.drawFrame({tx});
+pause(delay)
+
+tx.isVisible = true;
+tx.y = 4;
+
+dotsDrawable.drawFrame({tx tx2});
+pause(delay);
+
+dotsTheScreen.closeWindow();
+</code></pre>
+
+        </div>
+        <style type='text/css'>body {
+  font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #111;
+  background-color: #fdfdfd;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  -o-font-feature-settings: "kern" 1;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 5px;
+  }
+
+  body > #content {
+    padding: 0px 20px 20px 20px !important;
+  }
+}
+
+body > #content {
+  margin: 0px;
+  max-width: 900px;
+  border: 1px solid #e1e4e8;
+  padding: 10px 40px;
+  padding-bottom: 20px;
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr {
+  color: #bbb;
+  background-color: #bbb;
+  height: 1px;
+  flex: 0 1 auto;
+  margin: 1em 0;
+  padding: 0;
+  border: none;
+}
+
+/**
+ * Links
+ */
+a {
+  color: #0366d6;
+  text-decoration: none; }
+  a:visited {
+    color: #0366d6; }
+  a:hover {
+    color: #0366d6;
+    text-decoration: underline; }
+
+pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+}
+
+/**
+  * Code blocks
+  */
+
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  word-wrap: break-word;
+  padding: .2em .4em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+
+pre > code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+  font-size: 100%;
+}
+
+
+/**
+ * Blockquotes
+ */
+blockquote {
+  margin-left: 30px;
+  margin-top: 0px;
+  margin-bottom: 16px;
+  border-left-width: 3px;
+  padding: 0 1em;
+  color: #828282;
+  border-left: 4px solid #e8e8e8;
+  padding-left: 15px;
+  font-size: 18px;
+  letter-spacing: -1px;
+  font-style: italic;
+}
+blockquote * {
+  font-style: normal !important;
+  letter-spacing: 0;
+  color: #6a737d !important;
+}
+
+/**
+ * Tables
+ */
+table {
+  border-spacing: 2px;
+  display: block;
+  font-size: 14px;
+  overflow: auto;
+  width: 100%;
+  margin-bottom: 16px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/**
+ * Others
+ */
+
+img {
+  max-width: 100%;
+}
+
+p {
+  line-height: 24px;
+  font-weight: 400;
+  font-size: 16px;
+  color: #24292e; }
+
+ul {
+  margin-top: 0; }
+
+li {
+  color: #24292e;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5; }
+
+li + li {
+  margin-top: 0.25em; }
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #24292e; }
+
+a:visited {
+  color: #0366d6; }
+
+h1, h2, h3 {
+  border-bottom: 1px solid #eaecef;
+  color: #111;
+  /* Darker */ }</style>
+      </body>
+    </html>

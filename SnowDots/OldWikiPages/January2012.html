@@ -1,0 +1,228 @@
+
+    <html>
+      <head>
+        <title>January2012</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body>
+        <div id='content'>
+    <p>January2012 is the third formal milestone for the Snow Dots project. It corresponds to the repository tag called January2012: http://snow-dots.googlecode.com/svn/tags/January2012</p>
+<p>Documentation contemporary with January2012 is available.</p>
+<p>January2012 will receive bug fixes, but new API and feature changes will go in the trunk, to be included in a later milestone.</p>
+<p>There is companion January2012 tag for the Tower of Psych project. The Snow Dots and Tower of Psych "January2012" revisions are expected to work together.</p>
+<p><strong>Overview</strong></p>
+<p>January2012 represents a bunch of refactoring. Some of the changes are hidden inside class implementations. Some have significant behavior API changes.</p>
+<p>The biggest change is the removal of object manager singletons, such as dotsTheDrawablesManager! Instead, Snow Dots will use "ensembles" to group objects together and distribute them across Matlab instances.</p>
+<p><strong>dotsDrawableVertices and OpenGL Buffers</strong></p>
+<p>The new dotsDrawableVertices class uses OpenGL vertex buffers to store position and color data. Since colored vertices are the basis for many kinds of graphic, many dotsDrawable classes are now implemented as subclasses of dotsDrawableVertices.</p>
+<p>There are a few benefits to this reimplementation: * graphics that want to draw many vertices at once can do so without transmitting all of the vertex data on every frame. This improves performance when you draw the same thing more than once. * graphics that want to use vertex shaders with custom vertex attributes or transform feedback can take advantage of the vertex buffer functionality. * dotsDrawable classes have more API and functionality in common, so they can be treated uniformly.</p>
+<p>Classes that use OpenGL textures have not been implemented as dotsDrawableVertices subclasses. These classes have always stored data in OpenGL texture objects, so they already perform well for repeated drawing.</p>
+<p>See all the demos in demos/drawable/.</p>
+<p><strong>dotsReadable Replaces dotsQueryable</strong></p>
+<p>dotsQueryable classes performed two major functions: getting data from hardware devices, and classifying data with a spatial model. These functions have been broken into separate classes, and dotsQueryable classes have been removed.</p>
+<p>The new dotsReadable family of classes replaces the dotsQueryable family. Readables get data from hardware, but don't impose a spatial model on the data<br />
+The January2012 milestone of Tower of Psych implements new classes for spatial modeling and classification of data.<br />
+dotsPhenomenon and dotsFiniteDimension have been removed.<br />
+Object Ensembles and Remoteness</p>
+<p>January2012 removes a handful of classes related to object management and remote objects. Classes dotsTheDrawablesManager had become inflexible monoliths which were difficult to extend, debug, or explain.</p>
+<p>Object manager singletons are replaced with "ensemble" instances, which are smaller and more flexible. Ensembles perform the two major functions of object managers: grouping like objects together for batch operations, and distributing objects across Matlab instances.</p>
+<p>Basic grouping behavior is provided by the topsEnsemble class, which is new in the January2012 milestone of Tower of Psych.</p>
+<p>Remote object distribution is implemented in the new dotsClientEnsemble class.</p>
+<p>dotsClientEnsemble is a "drop-in" replacement for topsEnsemble which acts as a proxy for remote objects.<br />
+dotsEnsembleServer works on the remote end, to handle requests coming from dotsClientEnsemble objects.<br />
+dotsEnsembleUtilities provides several static methods for user convenience, and to establish behaviors that the client and server need to agree on.<br />
+See demos/demoEnsemble.m.</p>
+<p>Unlike manager singletons, dotsClientEnsemble will not use property listeners for aggregated objects. Instead, current, public object properties are transmitted during addObject(), and subsequent changes should be made via ensemble methods. This reduces code complexity.</p>
+<p><strong>Catching Up</strong></p>
+<p>January2012 makes some big changes to Snow Dots. As a result, some parts of the project will need time to catch up. Such consistency is the goal for Version1, which is coming soon.</p>
+<p>For January2012 itself, the Snow Dots unit tests are passing and the simple demos can run. But the task demos, which are more complicated, will be broken for a while. Alas.</p>
+<p>As I progress towards Version1, I will update the task demos and make a note of it here.</p>
+
+        </div>
+        <style type='text/css'>body {
+  font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #111;
+  background-color: #fdfdfd;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  -o-font-feature-settings: "kern" 1;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 5px;
+  }
+
+  body > #content {
+    padding: 0px 20px 20px 20px !important;
+  }
+}
+
+body > #content {
+  margin: 0px;
+  max-width: 900px;
+  border: 1px solid #e1e4e8;
+  padding: 10px 40px;
+  padding-bottom: 20px;
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr {
+  color: #bbb;
+  background-color: #bbb;
+  height: 1px;
+  flex: 0 1 auto;
+  margin: 1em 0;
+  padding: 0;
+  border: none;
+}
+
+/**
+ * Links
+ */
+a {
+  color: #0366d6;
+  text-decoration: none; }
+  a:visited {
+    color: #0366d6; }
+  a:hover {
+    color: #0366d6;
+    text-decoration: underline; }
+
+pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+}
+
+/**
+  * Code blocks
+  */
+
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  word-wrap: break-word;
+  padding: .2em .4em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+
+pre > code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+  font-size: 100%;
+}
+
+
+/**
+ * Blockquotes
+ */
+blockquote {
+  margin-left: 30px;
+  margin-top: 0px;
+  margin-bottom: 16px;
+  border-left-width: 3px;
+  padding: 0 1em;
+  color: #828282;
+  border-left: 4px solid #e8e8e8;
+  padding-left: 15px;
+  font-size: 18px;
+  letter-spacing: -1px;
+  font-style: italic;
+}
+blockquote * {
+  font-style: normal !important;
+  letter-spacing: 0;
+  color: #6a737d !important;
+}
+
+/**
+ * Tables
+ */
+table {
+  border-spacing: 2px;
+  display: block;
+  font-size: 14px;
+  overflow: auto;
+  width: 100%;
+  margin-bottom: 16px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/**
+ * Others
+ */
+
+img {
+  max-width: 100%;
+}
+
+p {
+  line-height: 24px;
+  font-weight: 400;
+  font-size: 16px;
+  color: #24292e; }
+
+ul {
+  margin-top: 0; }
+
+li {
+  color: #24292e;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5; }
+
+li + li {
+  margin-top: 0.25em; }
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #24292e; }
+
+a:visited {
+  color: #0366d6; }
+
+h1, h2, h3 {
+  border-bottom: 1px solid #eaecef;
+  color: #111;
+  /* Darker */ }</style>
+      </body>
+    </html>

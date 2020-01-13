@@ -1,0 +1,213 @@
+
+    <html>
+      <head>
+        <title>PupilLabs-installation</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body>
+        <div id='content'>
+    <p>The instructions below were tested and successfully carried out using Matlab 2016a on OSX 10.10.5 for PupilLabs 0.9.14.</p>
+<h1 id="pupillabs-software">PupilLabs software</h1>
+<p>To install the PupilLabs software, you must first install all the dependencies as outlined on their <a href="https://docs.pupil-labs.com/#macos-dependencies">website</a>. It is a good idea to execute the console commands line by line instead of copy and pasting the blocks on their site. This is because copying blocks may (for unknown reasons) result in certain commands being randomly skipped.</p>
+<p>Once you have installed all the dependencies, clone the <a href="https://github.com/pupil-labs/pupil">PupilLabs source code</a> to the directory from which you want to run the software.</p>
+<p>You can test your installation by navigating to directory where you cloned the git repository and running <code>python3 main.py</code>. This should start the PupilLabs software. If you run into problems, make sure that you have installed all the dependencies correctly and visit the PupilLabs GitHub site for additional help with troubleshooting.</p>
+<h1 id="snowdots-dependencies">SnowDots dependencies</h1>
+<p>To get the SnowDots PupilLabs object to run, you need to install some additional libraries. The first is <a href="https://github.com/fagg/matlab-zmq">matlab-zmq</a>. This will allow you to interface with the ZMQ network (which is what PupilLabs uses for all communication and data transmission) directly from Matlab. </p>
+<p>The matlab-zmq library requires ZMQ to be installed on your machine. Visit the <a href="http://zeromq.org/intro:get-the-software">ZMQ website</a> to install ZMQ onto your machine. Although the installation instructions for matlab-zmq state that you should use ZMQ 4.0.X, we have successfully used the package while runing ZMQ 4.2.2. It is likely (but not guaranteed) that any ZMQ version that promised backward compatibility will work fine.</p>
+<p>Once you have installed ZMQ, you need to compile the matlab-zmq MEX files. Follow the instructions on the matlab-zmq GitHub site. There is a small caveat that you may need to that the <code>ZMQ_COMPILE_LIB</code> variable in the <code>config.m</code> file from <code>./libzmq.a</code> to <code>libzmq.a</code>. This change may be dependent on your OS, and it could be the case that the files compile correctly without it. However, on OSX 10.10.5, we could not get the files to compile without this edit.</p>
+<h1 id="point-matlab-to-python3">Point Matlab to Python3</h1>
+<p>You will also need to point your Matlab to the Python3 version that you used to install PupilLabs. Alternatively, you can point it to another version of Python on your machine, but make sure that this version has the <code>msgpack_python</code> package installed. This is because there is no good msgpack serializer library for Matlab (please inform us if you write or make one) so we instead make use of Matlab's Python integration. </p>
+<p>On OSX, the way to point your Matlab to the Python3 installed via homebrew (if you followed PupilLabs dependencies installation) is to run the following command from the Matlab console (taken from <a href="https://erikreinertsen.com/python3-in-matlab/">here</a>)</p>
+<pre><code>pyversion('/usr/local/opt/python3/bin/python3.6');
+</code></pre>
+<p>You can check to make sure this worked by running just the <code>pyversion</code> command without any inputs.</p>
+<p>Once you have completed these steps, you are ready to use PupilLabs and the SnowDots object! Check out the demo scripts and descriptions in the WIKI for more information on how to use the class.</p>
+
+        </div>
+        <style type='text/css'>body {
+  font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #111;
+  background-color: #fdfdfd;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  -o-font-feature-settings: "kern" 1;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 5px;
+  }
+
+  body > #content {
+    padding: 0px 20px 20px 20px !important;
+  }
+}
+
+body > #content {
+  margin: 0px;
+  max-width: 900px;
+  border: 1px solid #e1e4e8;
+  padding: 10px 40px;
+  padding-bottom: 20px;
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr {
+  color: #bbb;
+  background-color: #bbb;
+  height: 1px;
+  flex: 0 1 auto;
+  margin: 1em 0;
+  padding: 0;
+  border: none;
+}
+
+/**
+ * Links
+ */
+a {
+  color: #0366d6;
+  text-decoration: none; }
+  a:visited {
+    color: #0366d6; }
+  a:hover {
+    color: #0366d6;
+    text-decoration: underline; }
+
+pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+}
+
+/**
+  * Code blocks
+  */
+
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  word-wrap: break-word;
+  padding: .2em .4em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+
+pre > code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+  font-size: 100%;
+}
+
+
+/**
+ * Blockquotes
+ */
+blockquote {
+  margin-left: 30px;
+  margin-top: 0px;
+  margin-bottom: 16px;
+  border-left-width: 3px;
+  padding: 0 1em;
+  color: #828282;
+  border-left: 4px solid #e8e8e8;
+  padding-left: 15px;
+  font-size: 18px;
+  letter-spacing: -1px;
+  font-style: italic;
+}
+blockquote * {
+  font-style: normal !important;
+  letter-spacing: 0;
+  color: #6a737d !important;
+}
+
+/**
+ * Tables
+ */
+table {
+  border-spacing: 2px;
+  display: block;
+  font-size: 14px;
+  overflow: auto;
+  width: 100%;
+  margin-bottom: 16px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/**
+ * Others
+ */
+
+img {
+  max-width: 100%;
+}
+
+p {
+  line-height: 24px;
+  font-weight: 400;
+  font-size: 16px;
+  color: #24292e; }
+
+ul {
+  margin-top: 0; }
+
+li {
+  color: #24292e;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5; }
+
+li + li {
+  margin-top: 0.25em; }
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #24292e; }
+
+a:visited {
+  color: #0366d6; }
+
+h1, h2, h3 {
+  border-bottom: 1px solid #eaecef;
+  color: #111;
+  /* Darker */ }</style>
+      </body>
+    </html>

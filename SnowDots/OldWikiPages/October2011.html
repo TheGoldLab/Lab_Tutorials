@@ -1,0 +1,234 @@
+
+    <html>
+      <head>
+        <title>October2011</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body>
+        <div id='content'>
+    <p>"October2011" is the second formal milestone for the Snow Dots project. It corresponds to the repository tag called October2011: https://snow-dots.googlecode.com/svn/tags/October2011</p>
+<p>Documentation contemporary with October2011 is also available.</p>
+<p>October2011 will receive bug fixes, but new API and feature changes will go in the trunk, to be included in a later milestone.</p>
+<p>There is a companion October2011 tag for the Tower of Psych project: https://tower-of-psych.googlecode.com/svn/tags/October2011 The Snow Dots and Tower of Psych "October2011" revisions are expected to work together.</p>
+<p>Overview</p>
+<p>October2011 represents a big change, because Snow Dots now uses MGL instead of Psychtoolbox for OpenGL and CPU timestamps.</p>
+<p>We made the change because MGL is easier to extend and rebuild. This made it easier to access advanced OpenGL features and work in 64-bit environments. Psychtoolbox still has many great features which users still might want to use. Since Snow Dots wasn't using most of these features, it made sense to go with the smaller MGL.</p>
+<p>There's more about MGL and Psychtoolbox at MGLMigration.</p>
+<p>Changes</p>
+<p>Most of the changes in October2011 relate to OpenGL. So I'll try to list all the API changes for dotsTheScreen, dotsTheDrawablesManager, and the dotsDrawable- subclasses.</p>
+<p>There are other changes, too. I'll point these out separately.</p>
+<p>OpenGL</p>
+<p>General<br />
+MGL treats the OpenGL drawing window and the pixels-per-degree conversion globally. So the windowNumber and pixelsPerDegree properties have been removed from dotsDrawable- classes.</p>
+<p>Since pixels-per-degree is handled globally, drawing properties related to size or distance should be assumed to be in degrees of visual angle, unless otherwise noted.</p>
+<p>dotsTheScreen<br />
+Here are the API changes to dotsTheScreen: |old name|new name|why?| |:---------|:---------|:-----| |pixelSize |bitDepth |name consistent with MGL usage| |displayRect|-- |unused in MGL| |priority |-- |unused in MGL| |stereomode|-- |stereo handled differently in MGL| |preferences|-- |preferences handled differently in MGL| |textSettings|-- |now handled by individual dotsDrawable- instances| |allTextModes|-- |now handled by individual dotsDrawable- instances| |windowNumber|-- |unused in MGL| |frameTolerance|flushGauge|MGLFlushGauge instance to keep track of frame timing| |frameSize |flushGauge|MGLFlushGauge instance to keep track of frame timing|</p>
+<p>MGLFlushGauge is a new class which encapsulates frame buffer swapping and frame timing.</p>
+<p>dotsTheDrawablesManager<br />
+Here are the API changes to dotsTheDrawablesManager: |old name|new name|why?| |:---------|:---------|:-----| |textSettings|-- |now handled by individual dotsDrawable- instances| |windowNumber|getScreenDisplayNumber()|access the global MGL display index| |pixelsPerDegree|-- |treated globally in MGL| |setScreenTextSetting()|-- |now handled by individual dotsDrawable- instances| |-- |degreeSizeToPixels()|utility for pixel conversion| |-- |pixelSizeToDegrees()|utility for pixel conversion| |-- |degreePointToPixels()|utility for pixel conversion| |-- |pixelPointToDegrees()|utility for pixel conversion|</p>
+<p>dotsDrawable- Subclasses<br />
+Here are API changes to the dotsDrawable subclasses: |subclass|old name|new name|why?| |:---------|:---------|:---------|:-----| |dotsDrawableArc(s)|dotsDrawableArc|dotsDrawableArcs|renamed to plural to express vectorization| |-- |rect |-- |no longer used| |-- |arcAngle |-- |no longer used| |-- |penWidth |-- |no longer used| |-- |-- |x |reimplemented in Snow Dots style| |-- |-- |y |reimplemented in Snow Dots style| |-- |-- |radius |reimplemented in Snow Dots style| |-- |-- |width |reimplemented in Snow Dots style| |-- |-- |nSlices |reimplemented in Snow Dots style| |-- |-- |nLoops |reimplemented in Snow Dots style| |-- |-- |smooth |new smoothness switches in October2011| |dotsDrawableDotKinetogram|dotSize |size |"dot" prefix redundant?| |-- |-- |stencilNumber|reimplemented to use OpenGL stencils| |-- |-- |smooth |new smoothness switches in October2011| |dotsDrawableImage(s)|dotsDrawableImage|dotsDrawableImages|renamed to plural to express vectorization| |-- |fileName |fileNames |reimplemented to use multiple file names| |-- |-- |pixelHeights|image property from server-side| |-- |-- |pixelWidth|image property from server-side| |-- |-- |pixelColors|image property from server-side| |-- |-- |imageTextureMakerFunction()|reimplemented as dotsDrawableTextures subclass| |dotsDrawableLines|x |xFrom |more convenient to separate line endpoints?| |-- |x |xTo |more convenient to separate line endpoints?| |-- |y |yFrom |more convenient to separate line endpoints?| |-- |y |yTo |more convenient to separate line endpoints?| |dotsDrawableTargets|dotSize |size |"dot" prefix redundant?| |-- |-- |smooth |new smoothness switches in October2011| |dotsDrawableText|-- |rotation |new text settings per instance| |-- |-- |isFlippedHorizontal|new text settings per instance| |-- |-- |isFlippedVertical|new text settings per instance| |-- |-- |typefaceName|new text settings per instance| |-- |-- |fontSize |new text settings per instance| |-- |-- |isBold |new text settings per instance| |-- |-- |isItalic |new text settings per instance| |-- |-- |isUnderline|new text settings per instance| |-- |-- |isStrikethrough|new text settings per instance| |dotsDrawableTexture(s)|dotsDrawableTexture|dotsDrawableTextures|renamed to plural to express vectorization| |-- |sourceRect|-- |no longer used| |-- |opacity |-- |no longer used| |-- |falseColor|-- |no longer used| |-- |filterMode|smooth |new smoothness switches in October2011|</p>
+<p>Non-OpenGL</p>
+<p>dotsTheMachineConfiguration<br />
+Existing machine configuration .xml files may need to be updated to use MGL instead of Psychtoolbox. For example, the Psychtoolbox handles <a href="https://github.com/GetSecs">@GetSecs</a> and <a href="https://github.com/WaitSecs">@WaitSecs</a> may change to the MGL handles <a href="https://github.com/mglGetSecs">@mglGetSecs</a> and <a href="https://github.com/mglWaitSecs">@mglWaitSecs</a>. If Psychtoolbox will remain on the Matlab path, these handles can stay as they are.</p>
+<p>During development, I had lots of UDP port conflicts with some other unknown application. So I changed the default ports for remote object managers to start at 49550 instead of 49050. This should not affect existing machine configuration .xml files.</p>
+<p>|old name|new name|why?| |:---------|:---------|:-----| |@GetSecs |@mglGetSecs|optional, depending on Psychtoolbox availability| |@WaitSecs |@mgleWaitSecs|optional, depending on Psychtoolbox availability| |UDP ports 49050-49055|UDP ports 49550-49555|clearer port range?|</p>
+<p>A few configuration property names for dotsTheScreen have changed: |old name|new name|why?| |:---------|:---------|:-----| |pixelSize |bitDepth |name consistent with MGL usage| |displayRect|-- |unused in MGL| |priority |-- |unused in MGL| |stereomode|-- |stereo handled differently in MGL| |preferences|-- |preferences handled differently in MGL| |textSettings|-- |now handled by individual dotsDrawable- instances|</p>
+<p>dotsAllSingletonObjects<br />
+Singleton initialization methods now accept property-value pairs as input arguments. This includes the theObject() and initialize() methods. So, for example, dm = dotsTheDrawablesManager.theObject(); dm.clientMode = false; dm.serverMode = false; dm.initialize(); Can use nicer syntax: dm = dotsTheDrawablesManager.theObject('clientMode', false, 'serverMode', false); This allows the singleton to initialize once, using the given properties. Previously it would have to initialize twice--once with default properties and once again with the given properties.</p>
+<p>dotsTheMessenger<br />
+dotsTheMessenger had a bug where an occasional message, which had been correctly sent and received, could not be acknowledged. This caused a communication breakdown between client and server. Although the bug was rare, it was consistent. I fixed the internal accounting to prevent this bug.</p>
+<p>dotsAllRemoteObjectManagers<br />
+The new updateClientObjectProperties() method allows remote object managers to update client-side objects with property values from the server-side counterpart. This is useful when the client wants to know the results of file or hardware access carried out on the server side. |old name|new name|why?| |:---------|:---------|:-----| |-- |updateClientObjectProperties()|server-to-client update utility|</p>
+<p>Unit Tests<br />
+I reimplemented the Snow Dots test runner and renamed it. runAllDotsTests() becomes dotsRunTests(). The new implementation is easier to configure and should eliminate some sequential effects during long test runs. This only affects developers.</p>
+<p>|old name|new name|why?| |:---------|:---------|:-----| |runAllDotsTests()|dotsRunTests()|"dots" as prefix, no longer needs to run "all" tests|</p>
+
+        </div>
+        <style type='text/css'>body {
+  font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #111;
+  background-color: #fdfdfd;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  -o-font-feature-settings: "kern" 1;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 5px;
+  }
+
+  body > #content {
+    padding: 0px 20px 20px 20px !important;
+  }
+}
+
+body > #content {
+  margin: 0px;
+  max-width: 900px;
+  border: 1px solid #e1e4e8;
+  padding: 10px 40px;
+  padding-bottom: 20px;
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr {
+  color: #bbb;
+  background-color: #bbb;
+  height: 1px;
+  flex: 0 1 auto;
+  margin: 1em 0;
+  padding: 0;
+  border: none;
+}
+
+/**
+ * Links
+ */
+a {
+  color: #0366d6;
+  text-decoration: none; }
+  a:visited {
+    color: #0366d6; }
+  a:hover {
+    color: #0366d6;
+    text-decoration: underline; }
+
+pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+}
+
+/**
+  * Code blocks
+  */
+
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  word-wrap: break-word;
+  padding: .2em .4em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+
+pre > code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+  font-size: 100%;
+}
+
+
+/**
+ * Blockquotes
+ */
+blockquote {
+  margin-left: 30px;
+  margin-top: 0px;
+  margin-bottom: 16px;
+  border-left-width: 3px;
+  padding: 0 1em;
+  color: #828282;
+  border-left: 4px solid #e8e8e8;
+  padding-left: 15px;
+  font-size: 18px;
+  letter-spacing: -1px;
+  font-style: italic;
+}
+blockquote * {
+  font-style: normal !important;
+  letter-spacing: 0;
+  color: #6a737d !important;
+}
+
+/**
+ * Tables
+ */
+table {
+  border-spacing: 2px;
+  display: block;
+  font-size: 14px;
+  overflow: auto;
+  width: 100%;
+  margin-bottom: 16px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/**
+ * Others
+ */
+
+img {
+  max-width: 100%;
+}
+
+p {
+  line-height: 24px;
+  font-weight: 400;
+  font-size: 16px;
+  color: #24292e; }
+
+ul {
+  margin-top: 0; }
+
+li {
+  color: #24292e;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5; }
+
+li + li {
+  margin-top: 0.25em; }
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #24292e; }
+
+a:visited {
+  color: #0366d6; }
+
+h1, h2, h3 {
+  border-bottom: 1px solid #eaecef;
+  color: #111;
+  /* Darker */ }</style>
+      </body>
+    </html>

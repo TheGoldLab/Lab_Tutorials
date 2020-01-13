@@ -1,0 +1,333 @@
+
+    <html>
+      <head>
+        <title>dotsTheScreen</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body>
+        <div id='content'>
+    <h1 id="dotsthescreen">dotsTheScreen</h1>
+<p>dotsTheScreen is used for setting up your monitors mgl display profile and calling the drawing screen to open during an experiment. dotsTheScreen is a sub-class of dotsAllSingletonObjects. A default profile is created using dotsTheMachineConfiguration. </p>
+<p>If you create a new script and enter in the code </p>
+<pre><code>sc = dotsTheScreen.theObject
+sc.open;
+pause(2);
+sc.close;
+</code></pre>
+<p>What you should see is a small black rectangle appear on screen for 2 seconds. This is because the default property value of displayIndex is set to 0, a useful setting for debugging purposes. More on properties below.</p>
+<h2 id="properties">Properties</h2>
+<h3 id="width-cm">width (cm)</h3>
+<ul>
+<li>Width is your display width measured in centimeters</li>
+</ul>
+<h3 id="height-cm">height (cm)</h3>
+<ul>
+<li>Height is your display height measured in centimeters</li>
+</ul>
+<h3 id="distance-cm">distance (cm)</h3>
+<ul>
+<li>Display distance is the distance that the user is assumed to be sitting away from the computer screen. </li>
+</ul>
+<h3 id="displayindex">displayIndex</h3>
+<ul>
+<li>The displayIndex can either be 0, 1, or 2. </li>
+<li>* 0 will open a small rectangle on your screen. </li>
+<li>* 1 will open the current drawing window to the full size of your primary display monitor.</li>
+<li>* 2 is used to display a drawing window on a second display screen.</li>
+</ul>
+<h3 id="displaypixels">displayPixels</h3>
+<ul>
+<li>displayPixels is a rectangle that represents the display in pixels. The arguments are [0 0 width height]. So if you had a monitor that was 1440p with a width of 59.6 and height of 33.6, you'd expect a pixel density of [0 0 2560 1440] </li>
+</ul>
+<h3 id="bitdepth">bitdepth</h3>
+<ul>
+<li>The color depth of each pixel as measured in the number of <a href="https://en.wikipedia.org/wiki/Color_depth">bits</a>.        </li>
+</ul>
+<h3 id="multisample">multisample</h3>
+<ul>
+<li>whether or not to use mgl full-scene antialiasing</li>
+</ul>
+<h3 id="windowrect">windowRect</h3>
+<ul>
+<li>pixel dimensions of the current drawing window [x y x2 y2]. Generally this will be set by displayIndex to either the size of a small drawing window rectangle (display index = 0, windowRect would then be 800 x 600) or full screen window (display index = 1)</li>
+</ul>
+<h3 id="windowframerate">windowFrameRate;</h3>
+<p>The refresh rate for the current screen as measured in Hz. The screen refreshes this many times in a second. This number will almost always be either 59,60, or 144.</p>
+<h3 id="pixelsperdegree">pixelsPerDegree</h3>
+<ul>
+<li>Approximate conversation factor for the current display. This number is relevant to the display distance in setting up where exactly the visual images will appear on screen in relation to a subjects eye. There is more to it, but that is beyond the scope of this wiki page.</li>
+</ul>
+<h3 id="foregroundcolor">foregroundColor</h3>
+<ul>
+<li>foregroundColor is the color of the drawing screen foreground. Arguments are [0-255 0-255 0-255] or [0-1 0-1 0-1] depending on how your gamma table is set up.</li>
+</ul>
+<h3 id="backgroundcolor">backgroundColor</h3>
+<ul>
+<li>backgroundColor is the color of the drawing screen background. Arguments are [0-255 0-255 0-255] or [0-1 0-1 0-1] depending on how your gamma table is set up. The example below should display a red drawing window.</li>
+</ul>
+<pre><code>sc = dotsTheScreen.theObject
+sc.backgroundColor = [255 0 0];
+sc.open
+pause(2);
+sc.close;
+</code></pre>
+<pre><code>    
+</code></pre>
+<h3 id="clockfunction">clockFunction</h3>
+<ul>
+<li>Simple returns the current time as measured by mglGetSecs. </li>
+</ul>
+<h3 id="gammatablefile">gammaTableFile</h3>
+<ul>
+<li>a gammeTableFile is a file that contains a gamma table. Default values are used if a gamma calibration has not been done using an optical device. A custom gamma table can be used by simply including the filename as the argument. On the computer being used to type this wiki the GammTable is simply 'dots<em>hntvlan554</em>GammaTable.mat'. </li>
+</ul>
+<h2 id="static-methods">Static methods</h2>
+<p>These static methods can be used to access the current state of your dotsTheScreen configuration.These methods can be accessed either using the screen variable or by direct access.</p>
+<h3 id="function-obj--theobjectvarargin">function obj = theObject(varargin)</h3>
+<p>This function is used to create a screen object. As seen in the examples below you would use this to create a Matlab variable that can be used to open or close the Screen.</p>
+<pre><code>sc = dotsTheScreen.theObject
+</code></pre>
+<h3 id="function-resetvaragin">function reset(varagin)</h3>
+<p>Restores the current instance to a fresh state.</p>
+<h3 id="function-g--gui">function g = gui()</h3>
+<p>This function simply allows you to check the parameters of your drawing window in a gui. Its the same information as if you simply typed in "sc" or "dotsTheScreen.theObject" into the command window.</p>
+<pre><code>sc.gui();
+</code></pre>
+<p>or</p>
+<pre><code>dotsTheScreen.gui();
+</code></pre>
+<h3 id="function-hostfile--gethostgammatablefilename">function hostFile = getHostGammaTableFilename()</h3>
+<p>This function grabs the GammaTable that is currently being used by the computer. If there isn't any, it will use default settings and give the name of the default hostname.</p>
+<pre><code>hostname = sc.getHostGammaTableFilename()
+</code></pre>
+<p>will return</p>
+<pre><code>hostname = dots_hntvlan554_GammaTable.mat
+</code></pre>
+<h3 id="function-displaynumber--getdisplaynumber">function displayNumber = getDisplayNumber()</h3>
+<p>Returns the display used for drawing IF a drawing window is currently open. Otherwise it will return "-1"</p>
+<h3 id="function-openwindow">function openWindow()</h3>
+<p>Opens the screen. Again, this can be used with either your display variable or directly accessed.</p>
+<pre><code>dotstheScreen.openWindow()
+</code></pre>
+<p>should open the same window as</p>
+<pre><code>sc.openWindow()
+</code></pre>
+<h3 id="function-closewindow">function closeWindow()</h3>
+<p>Closes the display window. The same applies for closeWindow as openWindow</p>
+<h2 id="methods">Methods</h2>
+<p>These non-static methods can only be accessed when dotsTheScreen.theObject is assigned to a variable. For the examples below we will have</p>
+<pre><code>sc = dotsTheScreen.theObject
+</code></pre>
+<h3 id="function-initializeself">function initialize(self)</h3>
+<p>This will reset the current window to a fresh state, closing the window.</p>
+<h3 id="function-openself">function open(self)</h3>
+<p>This will open a drawing window.</p>
+<pre><code>sc.open();
+</code></pre>
+<h3 id="function-closeself0">function close(self0</h3>
+<p>This will close the drawing window.</p>
+<pre><code>sc.close();
+</code></pre>
+<h3 id="function-frameinfo--nextframeself-doclear">function frameInfo = nextFrame(self, doClear)</h3>
+<p>This function flushes the drawing commands and swaps frame buffers. If doClear is false it should allow future drawings to accumulate as they are not cleared after each frame. Generally this function will not be manipulated directly. As most of the drawing commands in drawables access this method or call for their own frame swaps, using say sc.nextFrame(false) will not work. If you'd like let drawable objects accumulate on screen, there are easier ways to control this property. However, keeping objects on screen by simply not clearing the buffer can cause objects to flicker. It is not an advisable method. </p>
+<h3 id="function-frameinfo--blankself">function frameInfo = blank(self)</h3>
+<p>This function is to let the frame buffers swap twice without drawing. This function calls for a clear of the frame buffers and will cause any previous drawing commands to be processed but not shown. Similar to the function nextFrame, there can be conflicts between drawing commands that take it upon themselves to manipulate the frame buffers. There are easier ways to clear the screen. </p>
+<h3 id="function-gammatabletomatfileself-filewithpath">function gammaTableToMatFile(self, fileWithPath)</h3>
+<p>This saves gamma-correction data in stimulusGammaTable to a .mat file. The fileWithPath tells the function where to save the gamma table. The gamma table also seems to take the name of end file pathway. So in this case you should see a file named blah.mat.</p>
+<pre><code>sc.gammaTableToMatFile('Users/Matlab/blah/')
+</code></pre>
+<h3 id="function-gammatablefrommatfileself-filewithpath">function gammaTableFromMatFile(self, fileWithPath)</h3>
+<p>Loads gamma-correction data from a .mat file into stimulusGammaTable. If you check out your current gamma file it should probably be something to the effect of dots<em>computername</em>gammaTable.mat. If you use the command</p>
+<pre><code>sc.gammaTableFromMatFile('User/Matlab/blah/');
+sc
+</code></pre>
+<p>you will see that the new gammaTableFile has been loaded.</p>
+
+        </div>
+        <style type='text/css'>body {
+  font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #111;
+  background-color: #fdfdfd;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  -o-font-feature-settings: "kern" 1;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 5px;
+  }
+
+  body > #content {
+    padding: 0px 20px 20px 20px !important;
+  }
+}
+
+body > #content {
+  margin: 0px;
+  max-width: 900px;
+  border: 1px solid #e1e4e8;
+  padding: 10px 40px;
+  padding-bottom: 20px;
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr {
+  color: #bbb;
+  background-color: #bbb;
+  height: 1px;
+  flex: 0 1 auto;
+  margin: 1em 0;
+  padding: 0;
+  border: none;
+}
+
+/**
+ * Links
+ */
+a {
+  color: #0366d6;
+  text-decoration: none; }
+  a:visited {
+    color: #0366d6; }
+  a:hover {
+    color: #0366d6;
+    text-decoration: underline; }
+
+pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+}
+
+/**
+  * Code blocks
+  */
+
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  word-wrap: break-word;
+  padding: .2em .4em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+
+pre > code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+  font-size: 100%;
+}
+
+
+/**
+ * Blockquotes
+ */
+blockquote {
+  margin-left: 30px;
+  margin-top: 0px;
+  margin-bottom: 16px;
+  border-left-width: 3px;
+  padding: 0 1em;
+  color: #828282;
+  border-left: 4px solid #e8e8e8;
+  padding-left: 15px;
+  font-size: 18px;
+  letter-spacing: -1px;
+  font-style: italic;
+}
+blockquote * {
+  font-style: normal !important;
+  letter-spacing: 0;
+  color: #6a737d !important;
+}
+
+/**
+ * Tables
+ */
+table {
+  border-spacing: 2px;
+  display: block;
+  font-size: 14px;
+  overflow: auto;
+  width: 100%;
+  margin-bottom: 16px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/**
+ * Others
+ */
+
+img {
+  max-width: 100%;
+}
+
+p {
+  line-height: 24px;
+  font-weight: 400;
+  font-size: 16px;
+  color: #24292e; }
+
+ul {
+  margin-top: 0; }
+
+li {
+  color: #24292e;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5; }
+
+li + li {
+  margin-top: 0.25em; }
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #24292e; }
+
+a:visited {
+  color: #0366d6; }
+
+h1, h2, h3 {
+  border-bottom: 1px solid #eaecef;
+  color: #111;
+  /* Darker */ }</style>
+      </body>
+    </html>

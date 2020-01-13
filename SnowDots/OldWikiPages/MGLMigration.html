@@ -1,0 +1,227 @@
+
+    <html>
+      <head>
+        <title>MGLMigration</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body>
+        <div id='content'>
+    <p><strong>Motivation</strong></p>
+<p>In May 2011 the developers Josh Gold and Ben Heasly started talking about how to get "fancier" graphics with Snow Dots.</p>
+<p>We started by noticing that some of our stimulus implementations don't scale well. For example, for animated dots we calculate dot positions in m-code and then draw the dots in a circular aperture with Psychtoolbox Screen "DrawDots" and "DrawTexture". When we increase the number of dots past 10,000, we get unsatisfactory performance. The bottleneck may well be in our m-code.</p>
+<p>We considered video games as indicators of what we might expect if we were to reimplement stimuli the "right" way. Modern video games get very fancy, at high frame rates, by taking advantage of the processing power and memory in modern graphics hardware. If we do likewise, lots of dots and other complex stimuli should not be a problem.</p>
+<p>So we'd like to raise the complexity ceiling much higher by using advanced OpenGL features like shaders, which allow us to execute code on the graphics processor, and buffered objects, which reside in graphics memory.</p>
+<p>These OpenGL features are accessible through Psychtoolbox. However, if we're going to move beyond simple drawing commands and start doing OpenGL development, it's not clear that Psychtoolbox provides the best interface.</p>
+<p>We learned about MGL, an alternative OpenGL interface, from David Brainard and Chris Broussard. From a development point of view, MGL is attractive. It's smaller than Psychtoolbox. It's organized around multiple small mex functions, which are relatively easy to read and understand. It's easy to extend MGL by "dropping in" new mex functions. Most of all, it's easy to rebuild MGL from within Matlab.</p>
+<p>We think its worth using MGL, as a path of less resistance for OpenGL development. But migrating from Psychtoolbox to MGL would have consequences besides ease of development. This page discusses some of them.</p>
+<p><strong>Progress</strong></p>
+<p>As of 14 July 2011, we're still testing things out with MGL.</p>
+<p>As of July 29 2011, we have some test results at MGLFrameTiming which compare software frame timing estimates with on-screen light measurements.</p>
+<p>As of 5 August 2011, we've started an "MGL" branch of Snow Dots which will substitute MGL for Psychtoolbox for all drawing and frame timing.</p>
+<p><strong>Considerations</strong></p>
+<p>Timing<br />
+Frame timing is the biggest concern, and the biggest change from Psychtoolbox. Psychtoolbox uses "beam position" queries as one means of synchronizing Matlab with the video refresh cycle. This is nice because beam position its a direct measurement of refresh cycle phase. But these queries are not part of OpenGL itself and not always available, so we don't expect to rely on them with MGL.</p>
+<p>But we can still get frame timing information with MGL. The big three OpenGL implementations (for OS X, Windows, and Linux) are able to defer buffer swapping until the "vertical blank" phase of the refresh cycle. They can also block the calling application while waiting for the vertical blank. Thus, we can synchronize Matlab's execution with the vertical blank and also take timestamps when the vertical blanks happen.</p>
+<p>We developed an MGLFlushGauge class which keeps track of vertical blank timestamps. It uses these to measure the refresh cycle rate, count elapsed frames, and predict future frame onset times. It also attempts to detect things like missed drawing deadlines.</p>
+<p>MGLFlushGauge relies on a model for how the OpenGL implementation behaves with respect to frame timing. It's also naive compared to Psychtoolbox Screen in terms of timing information. But this is not necessarily fatal.</p>
+<p>We have some test results at MGLFrameTiming which evaluate MGLFlushGauge for correctness of its timing model. We think it worked well on a Mac Mini with OS X 10.6. It remains to be seen on what other systems MGLFlushGauge works well.</p>
+<p><strong>Screen()</strong><br />
+The Screen() mex function handles most of the drawing, frame timing, and context management of Psychtoolbox. MGL uses a suite of mex functions for drawing and timing, and stores context data in a global Matlab struct.</p>
+<p>Some steps in the migration would be one-to-one swaps which would be hidden by the Snow Dots API (i.e., users wouldn't care). Other steps involve higher-level project choices made by Psychtoolbox and MGL, and these might cause changes in the Snow Dots API.</p>
+<p>I (Ben Heasly) reviewed Screen() usage in Snow Dots, as well as dotsTheScreen, dotsTheDrawablesManager, and the dotsDrawable family of classes. Here are some significant migration steps I can see ahead and how I expect them to affect the Snow Dots API. I'm leaving out easy one-to-one substitutions.</p>
+<p>| Name | Migration Step | Snow Dots API? | |:---------|:-------------------|:-------------------| |pixels per degree|MGL uses the OpenGL modelview matrix instead of Matlab drawing code|remove pixelsPerDegree from dotsDrawable classes| |window number|MGL manages context globally, with one window per display|remove windowNumber from all classes| |"psych" comments|Make documentation agnostic about Psychtoolbox or MGL, as much as possible|-- | |priority |MGL does not treat CPU priority, so use another mechanism|-- | |stereo mode|MGL can switch displays but has no explicit stereo mode|remove stereoMode property of dotsTheScreen| |multisample|May need to add multi-sample pixel format for MGL|-- | |preferences|use mgl "params" instead of Psychtoolbox "preferences"|parameter names in XML config files| |text properties|let text classes manage properties like font, size and color|remove global text properties from dotsTheScreen and dotsTheDrawablesManager| |frame skips|let MGLFlushGauge deal with frame skip detection|remove related properties from dotsTheScreen| |window detection|check MGL global "GLContext"|remove isWindowOrTexture() from dotsTheScreen| |blending |may need new mex function to enable alpha blending in MGL|-- | |flip |use MGLFlushGauge in dotsTheScreen to handle frame flushing and timing|-- | |transparency|MGL makes it easy to open transparent windows|add transparency property to dotsTheScreen| |stencils |MGL makes it easy to work with OpenGL stencils--useful for some stimuli|-- | |arcs |MGL exposes gluPartialDisc(), which Psychtoolbox uses internally|-- |</p>
+<p><strong>Cost</strong></p>
+<p>Psychtoolbox does a lot more than just OpenGL. If we move away from Psychtoolbox, we would not longer get its other features as part of the package.</p>
+<p>Whether or not this is a good thing depends on point of view. We're not sure that it makes sense to get all Psychophysics features from one giant source. For some users, this might make a lot of sense.</p>
+<p><strong>Payoff</strong></p>
+<p>The considerations and changes above are mostly about matching or replacing the Psychtoolbox features we're using now, with MGL instead.</p>
+<p>We expect to see a benefit later, once we start doing OpenGL development. That would be a topic for another page and code demos.</p>
+
+        </div>
+        <style type='text/css'>body {
+  font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #111;
+  background-color: #fdfdfd;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  -o-font-feature-settings: "kern" 1;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 5px;
+  }
+
+  body > #content {
+    padding: 0px 20px 20px 20px !important;
+  }
+}
+
+body > #content {
+  margin: 0px;
+  max-width: 900px;
+  border: 1px solid #e1e4e8;
+  padding: 10px 40px;
+  padding-bottom: 20px;
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr {
+  color: #bbb;
+  background-color: #bbb;
+  height: 1px;
+  flex: 0 1 auto;
+  margin: 1em 0;
+  padding: 0;
+  border: none;
+}
+
+/**
+ * Links
+ */
+a {
+  color: #0366d6;
+  text-decoration: none; }
+  a:visited {
+    color: #0366d6; }
+  a:hover {
+    color: #0366d6;
+    text-decoration: underline; }
+
+pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+}
+
+/**
+  * Code blocks
+  */
+
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  word-wrap: break-word;
+  padding: .2em .4em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+
+pre > code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+  font-size: 100%;
+}
+
+
+/**
+ * Blockquotes
+ */
+blockquote {
+  margin-left: 30px;
+  margin-top: 0px;
+  margin-bottom: 16px;
+  border-left-width: 3px;
+  padding: 0 1em;
+  color: #828282;
+  border-left: 4px solid #e8e8e8;
+  padding-left: 15px;
+  font-size: 18px;
+  letter-spacing: -1px;
+  font-style: italic;
+}
+blockquote * {
+  font-style: normal !important;
+  letter-spacing: 0;
+  color: #6a737d !important;
+}
+
+/**
+ * Tables
+ */
+table {
+  border-spacing: 2px;
+  display: block;
+  font-size: 14px;
+  overflow: auto;
+  width: 100%;
+  margin-bottom: 16px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/**
+ * Others
+ */
+
+img {
+  max-width: 100%;
+}
+
+p {
+  line-height: 24px;
+  font-weight: 400;
+  font-size: 16px;
+  color: #24292e; }
+
+ul {
+  margin-top: 0; }
+
+li {
+  color: #24292e;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5; }
+
+li + li {
+  margin-top: 0.25em; }
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #24292e; }
+
+a:visited {
+  color: #0366d6; }
+
+h1, h2, h3 {
+  border-bottom: 1px solid #eaecef;
+  color: #111;
+  /* Darker */ }</style>
+      </body>
+    </html>

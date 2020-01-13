@@ -1,0 +1,321 @@
+
+    <html>
+      <head>
+        <title>Version1</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body>
+        <div id='content'>
+    <p>I'm aiming for a major revision, called Version 1. I expect to finish it by April, 2012. The big goals for 1.0 are:</p>
+<p>Full agreement among project areas, including code base, documentation, and project site.<br />
+Full agreement with Tower of Psych Version 1<br />
+Resolution of outstanding project issues, removal of stale issues<br />
+Good explanation of project components, and how to access components individually, without requiring the whole enchilada<br />
+Installer to easily get Version 1 by name (no need to know about repository tags, trunk etc.)<br />
+Expectation of long-term stability<br />
+This page contains my laundry list of changes to Snow Dots. I'll keep a similar for Tower of Psych</p>
+<p>January2010</p>
+<p>The first goal is to complete the changes in the January2012 milestone.</p>
+<p>This was done at the end of January, 2012.</p>
+<p>Foundation</p>
+<p>With fewer singletons to worry about, I want to flatten the singletons/ and superclasses/ folders into the foundation/ folder</p>
+<p>(small)</p>
+<p>As of January2012, these folders are gone.</p>
+<p>Mex</p>
+<p>I want to Remove mexUDPMxGram, since it's never used.</p>
+<p>(small)</p>
+<p>As of r892, mexUDPMxGram is gone.</p>
+<p>Demos</p>
+<p>Demos should agree with all the changes up to Version 1.</p>
+<p>Revise and recomment 2afc demo<br />
+As of r892, 2afc demo is reimplemented to use topsEnsmbles.<br />
+Revise and recomment dotris demo<br />
+did this.<br />
+Revise and recomment plexon integration demo<br />
+Actually, I removed this because it wasn't much of a "task"<br />
+Remove squares demo<br />
+As of r892, the squares is replaced with SquareTagPlus.<br />
+(big - 2 days)</p>
+<p>Demos were reimplemented in March 2012.</p>
+<p>Code Style</p>
+<p>Class members that are intuitively "internal" to a class should all use the SetAccess = protected or Access = protected modifier. That way members are viewable but won't get messed with by accident. Now, there's a mix of access modifiers and hidden status, for no good reason.</p>
+<p>(small)</p>
+<p>Made uniform style around member access as of r924.</p>
+<p>Singletons</p>
+<p>Snow Dots does not need so many singletons. They cause headaches with managing global state. In addition to removal of manager singletons (in January2012):</p>
+<p>Move shared defaults from TheSwitchboard to TheMachineConfiguration<br />
+Remove TheSwitchboard, since no more windowNumber or pixelsPerDegree<br />
+TheScreen must work via dotsClientEnsemble (instead of dotsTheDrawablesManager)<br />
+As of January2012, this works, and dotsTheDrawablesManager is gone.<br />
+(big - 1 day)</p>
+<p>As of r934, all this is done</p>
+<p>Readables</p>
+<p>I want to make a dotsReadableEyeEyelink class, based on the MGL Eyelink API. But I'll but leave testing up to someone with Eyelink hardware.</p>
+<p>(small)</p>
+<p>r945 contains an implementation of dotsQueryableEyeEyelink.<br />
+Utilities</p>
+<p>Utilities can be pruned and reorganized.</p>
+<p>MGLFlushGauge -&gt; dotsMglFlushGauge<br />
+Did in r936.<br />
+Remove checkUDPSnowDots, since unclear and old<br />
+As of r892, checkUDPSnowDots is gone.<br />
+Remove resetTheSingletons, since only two singletons left<br />
+As of r937, resetTheSingletons is gone.<br />
+Remove repeatAllDotsTests, since no more global modes.<br />
+As of January2012, repeatAllDotsTests is gone.<br />
+ApplyClockDriftAndOffset -&gt; clockDriftApply<br />
+Did in r936.<br />
+EstimateClockDriftAndOffset -&gt; clockDriftEstimate<br />
+Did in r936.<br />
+Reimplement benchmarkDOutStrobedWords to use ensembles<br />
+done, became benchmarkDOutPlexon, in r943.<br />
+Implement utilities that can do remote data log updating, (via an ensemble)<br />
+r947 contains new dotsDataLogUtilities for doing log updates and writing, via ensembles.<br />
+(big - 1 day)</p>
+<p>done, as of r947</p>
+<p>Tests</p>
+<p>I'll need to rename several unit tests to agree with 1.0.</p>
+<p>for r950 I reviewed test suite names and updated just one</p>
+<p>(small)</p>
+<p>Issues</p>
+<p>The issues database has become stale and clumsy.</p>
+<p>Close issues solved in 1.0<br />
+All issues reviewed as of 26 March 2012.<br />
+No-Solve other issues with a note<br />
+I did this on 8 Jan<br />
+(small)</p>
+<p>I didn't close all the issues, but the remaining issues are somewhat nebulous and low-priority.</p>
+<p>userProjects/</p>
+<p>I should reimplement predictiveInference for Version 1.</p>
+<p>(big - 1 day)</p>
+<p>The predictive inference task is updated as of r971</p>
+<p>Installer</p>
+<p>The installer should be easier to point at a named version, like "Version 1". Also, it should be a complete installer as opposed to a checklist.</p>
+<p>SVN checkout for Snow Dots, Tower of Psych, and MGL<br />
+Grab from file exchange via urlwrite():<br />
+http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework?controller=file<em>infos&download=true
+http://www.mathworks.com/matlabcentral/fileexchange/345-tcpudpip-toolbox-2-0-6?controller=file</em>infos&amp;download=true<br />
+Build mex stuff for pnet and mex/<br />
+(small)</p>
+<p>r978 contains a new implementation of installSnowDots.</p>
+<p>Docs</p>
+<p>The role and form of the docs can be tweaked.</p>
+<p>Doc front page as TOC, not as intro<br />
+Focus on classes and functions as API/reference<br />
+Remove confusing nav tabs<br />
+(small)</p>
+<p>As of r983, I updated the docs to be more focused.</p>
+<p>wiki</p>
+<p>The wiki needs some more explanatory content.</p>
+<p>Components Page<br />
+component descriptions<br />
+checkout links for component folders<br />
+component dependencies, like OS and hardware<br />
+Components page is done as of r994<br />
+Page about client-server and ensemble communications<br />
+ClientServerEnsemble page is done as of r1014<br />
+sweet diagrams<br />
+all components and collaborations/dependencies<br />
+r1014 contains new components diagram.<br />
+objects, ensembles and Matlab instances<br />
+r1014 contains new digrams about client-server and ensembles.<br />
+Page of algebra about exploding bag of money<br />
+r1048 contains new a ExplosionAlgebra page.<br />
+(big - 3 days)</p>
+<p>Main Page</p>
+<p>The main page should make better first impressions.</p>
+<p>Short intro, components<br />
+Short status<br />
+Shouts out to related projects<br />
+Several wiki pages (below the fold)<br />
+(small)</p>
+<p>As of 14 April 2012 Version 1 is complete!</p>
+
+        </div>
+        <style type='text/css'>body {
+  font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #111;
+  background-color: #fdfdfd;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  -o-font-feature-settings: "kern" 1;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 5px;
+  }
+
+  body > #content {
+    padding: 0px 20px 20px 20px !important;
+  }
+}
+
+body > #content {
+  margin: 0px;
+  max-width: 900px;
+  border: 1px solid #e1e4e8;
+  padding: 10px 40px;
+  padding-bottom: 20px;
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr {
+  color: #bbb;
+  background-color: #bbb;
+  height: 1px;
+  flex: 0 1 auto;
+  margin: 1em 0;
+  padding: 0;
+  border: none;
+}
+
+/**
+ * Links
+ */
+a {
+  color: #0366d6;
+  text-decoration: none; }
+  a:visited {
+    color: #0366d6; }
+  a:hover {
+    color: #0366d6;
+    text-decoration: underline; }
+
+pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+}
+
+/**
+  * Code blocks
+  */
+
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  word-wrap: break-word;
+  padding: .2em .4em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+
+pre > code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+  font-size: 100%;
+}
+
+
+/**
+ * Blockquotes
+ */
+blockquote {
+  margin-left: 30px;
+  margin-top: 0px;
+  margin-bottom: 16px;
+  border-left-width: 3px;
+  padding: 0 1em;
+  color: #828282;
+  border-left: 4px solid #e8e8e8;
+  padding-left: 15px;
+  font-size: 18px;
+  letter-spacing: -1px;
+  font-style: italic;
+}
+blockquote * {
+  font-style: normal !important;
+  letter-spacing: 0;
+  color: #6a737d !important;
+}
+
+/**
+ * Tables
+ */
+table {
+  border-spacing: 2px;
+  display: block;
+  font-size: 14px;
+  overflow: auto;
+  width: 100%;
+  margin-bottom: 16px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/**
+ * Others
+ */
+
+img {
+  max-width: 100%;
+}
+
+p {
+  line-height: 24px;
+  font-weight: 400;
+  font-size: 16px;
+  color: #24292e; }
+
+ul {
+  margin-top: 0; }
+
+li {
+  color: #24292e;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5; }
+
+li + li {
+  margin-top: 0.25em; }
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #24292e; }
+
+a:visited {
+  color: #0366d6; }
+
+h1, h2, h3 {
+  border-bottom: 1px solid #eaecef;
+  color: #111;
+  /* Darker */ }</style>
+      </body>
+    </html>

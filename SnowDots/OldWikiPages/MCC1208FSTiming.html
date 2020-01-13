@@ -1,0 +1,258 @@
+
+    <html>
+      <head>
+        <title>MCC1208FSTiming</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body>
+        <div id='content'>
+    <p>Following on my exploration about USB timing in general (USBTimingBreadcrumbs), I did some tests with the 1208FS digital IO device from Measurement Computing. These are aimed at characterizing the 1208FS itself, as well as putting mexHID through some paces with a full speed, proprietary device.</p>
+<p>The tests are in a folder called MCCSandbox/. It lives in the Snow Dots repository along with the mexHID code. If you have Snow Dots installed already, you already have the test script in the mex/mexHID subfolder folder.</p>
+<p>So far I've done some tests with the digital inputs and outputs. Later I plan to work with the analog inputs, too.</p>
+<p><strong>Digital IO</strong></p>
+<p>Tests for the digital side of the device are in MCCSandbox/MCCDigitalTiming.m.</p>
+<p>Test 1</p>
+<p>Test 1 does some digital IO round trips. For setting values to the device, it uses raw HID reports. For reading values from the device it uses individual input elements.</p>
+<p>Aside<br />
+Interestingly, reports were the only way I could reliably work with the device. Only a few of the output-type elements were responsive when I tried to set their values individually. I tried setting their values in batches, using the "set multiple" or "transaction" functions of the the OS X HID API. I assumed these functions would end up generating the same kinds of reports I would generate myself for doing the "raw" report method. But the device was not responsive to them. So raw reports it is.</p>
+<p>Similarly, the device was not responsive when I tried to read "raw" input reports. I might have been able to implement an asynchronous report handler. But this would be cumbersome and I intend to avoid it as long as possible. Fortunately, input elements are updated in the expected "interrupt" fashion, so I can just read these and queue them as I do for other devices.</p>
+<p>Anyway back to the tests. There are a few parts to the test loop: * write a digital output to port A (an output report) * wait for a delay, d * trigger the device to send back its digital port values (an output report) * wait for a delay, d * read the value of the input element for port A</p>
+<p>So for each iteration I get 5 interesting timestamps: pre- and post-output, pre- and post-trigger, and input value change.</p>
+<p>I varied the delay period d in order to determine where the input value timestamps fall relative to the output setting and input setting. As d grows, and the output and trigger get farther apart, do the input value timestamps stay pegged to one report or the other.</p>
+<p>The input value timestamps are clearly pegged to the post-trigger time. So the host only sees an update to the digital port value following an explicit triggering. This is at odds with what happens physically: I can measure a voltage change on the port with my voltmeter, regardless of whether I ever trigger an update or not.</p>
+<p>So the input value timestamps are not very good. At best, when the input update trigger happens immediately after the new output value is set, the input timestamps will be a few miliseconds late. The post-output timestamps is probably a better estimate of when the physical voltage change occurred.</p>
+<p>Test 2</p>
+<p>In my previous timing tests using my HID mouse, I saw that input timestamps had a severe granularity, apparently corresponding to the "report interval" of the mouse device. The 1208FS seems to have the same "report interval". Do its input timestamps suffer from the same granularity?</p>
+<p>The test was similar, but I added the input elements to a HID Queue instead of polling for them explicitly. The test loop did the following: * write a digital output to port A (an output report) * trigger the device to send back its digital port values (an output report) * mexHID run the CFRunLoop to update the input queue</p>
+<p>I plotted the all the intervals between the queued input value timestamps (the "diff" of the timestamps). The granularity is about 1ms, which is good: it's a frame, not a full "report interval". But none of the intervals was less than 3ms.</p>
+<p>This is because I can only enqueue a value change after doing two other significant transactions: setting the new value and triggering a value update. The triggering amounts to polling the device for value changes, and polling frequency, using synchronous function calls for the two transactinos, was about 4ms.</p>
+<p>So, in this case, granularity is not a problem. The value change is reported with frame-sized granularity, soon after triggering an update. But the requirement of having to trigger the update explicitly is large and unfortunate.</p>
+<p>And it may be moot. As in Test 1, the best estimate of when the digital IO port actually responded with a voltage is probably the post-output timestamp, not the value-change timestamp.</p>
+<p>A different use case would be reading digital ports from an external source. It would be unfortunate to have to poll for these. I wonder if there's a way to activate interrupting behavior for the digital ports. Maybe this is what the port configuration is for, which I don't understand yet. Or maybe this was just a design choice having to do with some typical (or obvious?) digital port uses.</p>
+<p>I expect that the analog side of the device will do interrupting behavior. The caveat there will be making sure to observe all the high-frequency samples that the device comes up with….</p>
+<p><strong>Analog IO</strong></p>
+<p>Tests for the digital side of the device are in MCCSandbox/MCCAnalogTiming.m.</p>
+<p>The analog side of the device is a lot more complicated than the digital. The 1208FS is actually a composite of four devices, three of which trade off sending input reports to the host. Working out the communication with the three "helper" devices took a while, as did decoding the input sample values and assigning times to them.</p>
+<p>But the result is nice: * Instead of reading all the raw input reports, I cache baseline byte values and enqueue byte changes just like other HID input element values changes. * I can reconstruct reports after the fact, and account for all reports by number even at high (~45kHz) sample frequencies * I can use the analog ouputs while scanning inputs and get interrupting behavior (as expected).</p>
+<p>Test 1</p>
+<p>Test 1 does output-input round trips. For outputs, it writes successive digital value to the output ports, using raw HID reports. For inputs it starts a scan with a raw HID report, then enqueues element value changes, which correspond to individual data bytes. It reconstructs all the raw reports after the scan is complete.</p>
+<p>I wired up four input channels and configured them for single-ended (vs. ground) scanning, as follows: * channel 8 connects to analog output A * channel 9 connects to analog output B * channel 10 connects to the +5V terminal * channel 11 connects to the analog ground terminal</p>
+<p>I gathered data as follows: * read baseline byte values for each of the analog input elements on each "helper" device * add the input elements to queues to record subsequent byte value changes * start scanning all input channels at 2500Hz each (10000Hz total) * write broad sweeps of output values to outputs A and B * stop scanning and reconstruct the input reports and channel sample values</p>
+<p>As a smell test, I plotted the sequence of input sample values against the sequence of output values. It smells right. channel 8 reflects the values from output A, 9 reflects B, 10 holds steady at +5V, and 11 holds steady at 0V. Thus, I'm able to account for samples during a continuous scan and assign them to the correct channels, at the appropriate times.</p>
+<p>But what are the "appropriate times"?. Test 2 looks at timing in more detail.</p>
+<p>Test 2</p>
+<p>Test 2 reuses data from Test 1. I looked more closely at out how to align samples from the 1208FS with timestamps taken on the host side. I did this in three steps: * construct a scan timeline based on the 1208FS internal clock * pick a host timestamp to estimate the origin of the scan timeline * measure the drift rate between the 1208FS clock and host clock, and correct for it</p>
+<p><strong>1208FS scan timeline</strong><br />
+The first question was how to come up any kind of timeline at all, for samples taken during an analog scan. HID input value change timestamps are not meaningful here for a few reasons: * HID value timestamps correspond to when the host received a report, not when the device took an individual sample. All samples sent in the same report appear to have the same timestamp. * The host's report-time timestamp might be jittered, which might be confounding at high sample frequencies. * The values that change are report bytes, not sample values. And, * Samples occupy two bytes and the most and least significant bytes are likely to change at different times * Report bytes change get reused in cyclic fashion for whatever channels are being scanned. So a byte value change might mean that a byte representing a new channel, not that a channel changed value. Likewise, a channel might happen to change value in such a way that its bytes match those of another channel, allowing a real channel value change go unnoticed. * "helper" devices also get reused in cyclic fashion, taking turns sending reports to the host. The host represents reports from each device separately. So again, the cyclic reuse means that spurious value changes may be reported, and real changes might be ignored. In short, the 1208FS represents data and time in its own way, which the host doesn't know about. There's nothing in the USB or HID protocols or the OSX HID implementation to help with decoding.</p>
+<p>But decoding aside, there is no data loss: the 1208FS sends a serial number along with each report. It's easy to detect when this value changes, so it's possible to keep track of all reports send by the "helper" devices and the raw byte value changes associated with each report. I combine all the byte change data with a baseline byte value reading taken before each scan, and get a full account of reports send from the device to the host.</p>
+<p>Then it's a matter of extracting channel sample values from the raw bytes. I won't go into these details. But I would like to acknowledge that I got huge hints from the Psychtoolbox DaqToolbox code. I also learned a lot from my own probing of the device. Some hacks were inevitable since the 1208FS is proprietary hardware, and Measurement Computing didn't reply to my request for developer documentation (a data sheet??). I tried to keep the hacking sane and organized. It's all there in the MCCSandbox/MCC<strong>functions.</strong></p>
+<p>So from bytes I reconstructed individual samples from the various channels. I put all the samples in order. I assigned the time 0 to the very first sample. I used the scan sample rate to assign evenly-spaced times to the subsequent samples. This is my scan timeline, based on the 1208FS clock.</p>
+<p>Host timestamp for the scan origin<br />
+The next question was how to align the scan timeline origin with the host clock. Since mexHID returns pre- and post-transaction timestamps for each USB transaction, I had two estimates of when the 1208FS began scanning: * the pre-scan timestamp (requesting the 1208FS to initiate a scan) * the post-scan timestamp (after the 1208FS acknowledged the scan request) But I didn't know beforehand which timestamp was closer or less jittered with respect to the actual, physical scan initiation.</p>
+<p>I used the lopped-back output and input channels to try to get a handle on this. I had two estimates of when the 1208FS physically manifested each output value: * the pre-write timestamp (requesting a new voltage at output A or output B) * the post-write timestamp (after the 1208FS acknowledged the output request)</p>
+<p>I also could detect when each voltage change was detected at the connected input channel. For each output value, I chose one input sample that was "coincident", based on nearness in time and anticipated voltage value (see the compareOutputToCoincidentInput() function of MCCAnalogTiming.m for details). These matched sample times were also estimates of output event timing, but in the 1208FS timeline, not by the host clock.</p>
+<p>The write timestamps and sample coincident sample gave me observations of the same output events, using different clocks. Aligning them should indicate how to align the clocks. In particular, I could choose to align the origin of sample times with the pre-scan or post-scan timestamp. I could also chose to use the pre-write or post-write timestamp. Thus I had four possible pairings for reconciling matched samples with the write timestamps: * pre-scan, pre-write * pre-scan, post-write * post-scan, pre-write * post-scan, post-write I expected one of these pairings to be "best", and picking the best would allow me to pick pre-or post-scan as the origin for scan timeline.</p>
+<p>So for each paring I constructed a sample timeline and aligned it to one of the scan timestamps. I took one of the sets of write timestamps and found "coincident" scan samples. I subtracted the same write timestamps from the coincident sample times to obtain a "coincidence interval" for each output value. I took the distribution of coincidence intervals as a measure of "goodness" of each pairing: the less spread the better.</p>
+<p>Pairings that contained the pre-write timestamps had the widest spread of coincidence intervals. Output A also seemed to have wider-spread intervals than output B. Both may have to do with how well Matlab was synced to the USB host frames. During each pass through my test loop (in MCCAnalogTiming.m) the first thing I did was to write to output A. Since Matlab had been busy beforehand, the pre-write-A timestamp was potentially uncorrelated with the USB frames. But the post-write-A timestamp should have been correlated, since it was taken immediately after a transaction. pre-write-B followed immediately, so it may have borrowed stability from the preceding write-A transaction. Post-write-A and post-write-B should have been equally stable, and apart from an outlier, this looks to be the case.</p>
+<p>So it seems that post-write transactions should be more stable than pre-write. I chose to align the scan timeline to the post-scan host timestamp.</p>
+<p><strong>1208FS vs host clock drift</strong><br />
+Although they all measure seconds, any two clocks will drift apart over time. Assuming the drift has a constant rate, it's straightforward to measure the rate and correct for it.</p>
+<p>To measure the drift between the host clock and the 1208FS clock, I used the interval between the first and last output value. The host-side write transaction timestamps provided one measurement of the interval. The 1208FS sample timeline provided another measurement. The ratio of the host measurement and the 1208FS measurement is the clock drift rate. The drift rate looked about the same regardless of which pre- or post- transaction time or which output port I used.</p>
+<p>The 1208FS clock appeared to count slower than the host clock, by factor of .001 or about 1ms/s. This is significant! During longer tests, the clock drift dominated my "coincidence interval" measurements, causing their distributions to smear out. Correcting for expected drift at each write timestamp tightened up the distributions and accentuated the differences between pre- and post-transaction timestamps.</p>
+<p>I expect that the clock drift I measured is specific the clocks in my particular host computer and 1208FS device. For any host and device, it should be possible to measure the drift once and incorporate the drift rate into the inital decoding of sample times.</p>
+<p>My decoding of 1208FS channel values and sample times assumes that all data sent from the 1208FS device are reaching the host. Test 3 checks that assumption.</p>
+<p>Test 3</p>
+<p>During an analog scan, the 1208FS sends sample data to the host in reports, which are batches of bytes. Two of the bytes contain serial numbers, as opposed to analog data, and these serial numbers allow the us to account for reports and detect whether some reports are missing. What's more, we can use the constant number of samples per report to account for individual samples.</p>
+<p>Thus, we can request a finite number of samples from the device and then predict the number of reports, n, that it should take to send all the samples. The host should receive exactly 1 of each report numbered from 0 through n-1.</p>
+<p>I tested report completeness as follows: * add the input elements for each helper (including report serial number) to value-change queues * for each of several scanning frequencies ranging 1000Hz through 55kHz * request a finite number of samples * check the input queues until all reports 0 through n-1 have arrived * or until the 1208FS appears to be stuck and hasn't sent new reports for a while * compare the serial numbers of reports that arrived to the expected 0 through n-1</p>
+<p>Completeness was good. For sample frequencies as high as ~45kHz I saw every report expected. For higher rates, especially above the nominal maximum of 50kHz, I saw only a few reports before the device appeared to stall. Thus, the 1208FS appeared to function to its specifications. The OS X USB implementation and my mexHID approach were able to handle the full range of sampling frequencies without data loss!</p>
+<p>A note about queues, through: my test was a best-case scenario in which I read from my input queues frequently. In a real-experiment scenario there might not be possible to read from input queues as often. Thus some care might be required to match the expected rate of report arrival (dependent on scanning frequency) to the expected frequency of reading from the input queues (dependent on experiment implementation). The difference between the two should suggest an appropriate input queue depth, which can be chosen arbitrarily.</p>
+
+        </div>
+        <style type='text/css'>body {
+  font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #111;
+  background-color: #fdfdfd;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  -o-font-feature-settings: "kern" 1;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 5px;
+  }
+
+  body > #content {
+    padding: 0px 20px 20px 20px !important;
+  }
+}
+
+body > #content {
+  margin: 0px;
+  max-width: 900px;
+  border: 1px solid #e1e4e8;
+  padding: 10px 40px;
+  padding-bottom: 20px;
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr {
+  color: #bbb;
+  background-color: #bbb;
+  height: 1px;
+  flex: 0 1 auto;
+  margin: 1em 0;
+  padding: 0;
+  border: none;
+}
+
+/**
+ * Links
+ */
+a {
+  color: #0366d6;
+  text-decoration: none; }
+  a:visited {
+    color: #0366d6; }
+  a:hover {
+    color: #0366d6;
+    text-decoration: underline; }
+
+pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+}
+
+/**
+  * Code blocks
+  */
+
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  word-wrap: break-word;
+  padding: .2em .4em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+
+pre > code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+  font-size: 100%;
+}
+
+
+/**
+ * Blockquotes
+ */
+blockquote {
+  margin-left: 30px;
+  margin-top: 0px;
+  margin-bottom: 16px;
+  border-left-width: 3px;
+  padding: 0 1em;
+  color: #828282;
+  border-left: 4px solid #e8e8e8;
+  padding-left: 15px;
+  font-size: 18px;
+  letter-spacing: -1px;
+  font-style: italic;
+}
+blockquote * {
+  font-style: normal !important;
+  letter-spacing: 0;
+  color: #6a737d !important;
+}
+
+/**
+ * Tables
+ */
+table {
+  border-spacing: 2px;
+  display: block;
+  font-size: 14px;
+  overflow: auto;
+  width: 100%;
+  margin-bottom: 16px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/**
+ * Others
+ */
+
+img {
+  max-width: 100%;
+}
+
+p {
+  line-height: 24px;
+  font-weight: 400;
+  font-size: 16px;
+  color: #24292e; }
+
+ul {
+  margin-top: 0; }
+
+li {
+  color: #24292e;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5; }
+
+li + li {
+  margin-top: 0.25em; }
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #24292e; }
+
+a:visited {
+  color: #0366d6; }
+
+h1, h2, h3 {
+  border-bottom: 1px solid #eaecef;
+  color: #111;
+  /* Darker */ }</style>
+      </body>
+    </html>

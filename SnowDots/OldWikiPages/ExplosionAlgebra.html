@@ -1,0 +1,291 @@
+
+    <html>
+      <head>
+        <title>ExplosionAlgebra</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body>
+        <div id='content'>
+    <p>dotsDrawableExplosion draws lots of particles as they move through parabolic trajectories. When a particle hits the ground, it bounces and enters a new trajectory. After a few bounces, it comes to rest on the ground.</p>
+<p>Each particle is constrained by its starting position, its resting position, and the total time it must spend in reaching its resting position. The system of particles uses a constant downward acceleration, velocity damping each time a particle bounces, and a fixed number of trajectories that each particle must trace before resting.</p>
+<p>This is enough information to solve the system, so that the position of any particle can be computed for any time between starting and resting. This page describes how dotsDrawableExplosion solves the system.</p>
+<p>Easy System</p>
+<p>Consider a simplified system, in which a particle starts out on the ground, bounces on the ground, and comes to rest on the same ground. This system is relatively easy to solve.</p>
+<p>The diagram below depicts the y-position of a particle as a function of time.</p>
+<p>http://snow-dots.googlecode.com/svn/wiki/diagrams/explosion-algebra-easy.png</p>
+<p>http://latex.codecogs.com/gif.latex?\rm v<em>{y0}%.png' /> is the initial upward velocity of the particle
+http://latex.codecogs.com/gif.latex?\rm v</em>{y3}%.png' /&gt; is the upward velocity of the particle after three bounces<br />
+http://latex.codecogs.com/gif.latex?\rm damp<em>y%.png' /> is the damping applied the particle's velocity at each bounce
+http://latex.codecogs.com/gif.latex?\rm t</em>0%.png' /&gt; is the time the particle spends in the air before the first bounce<br />
+http://latex.codecogs.com/gif.latex?\rm t<em>3%.png' /> is the time the particle spends in the air after the third bounce, before coming to rest
+http://latex.codecogs.com/gif.latex?\rm t</em>{rest}%.png' /&gt; is the total time spend coming to rest<br />
+http://latex.codecogs.com/gif.latex?\rm a_{y}%.png' /&gt; is the constant, downward acceleration of the system<br />
+the number of trajectories http://latex.codecogs.com/gif.latex?\rm n%.png' /&gt; is 4 in this diagram<br />
+First let's consider just vertical motion. A large constraint on vertical motion is the total time that a particle must spend coming to rest. This is the sum of times from each trajectory.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm t<em>{rest} = \sum</em>{i=0}^{n-1} t_i%.png' /&gt;</p>
+<p>To solve each trajectory http://latex.codecogs.com/gif.latex?\rm i%.png' /&gt;, we would like to know each http://latex.codecogs.com/gif.latex?\rm t<em>i%.png' /> and each starting upward velocity http://latex.codecogs.com/gif.latex?\rm v</em>{yi}%.png' /&gt;. Since the particle starts and ends each trajectory on the ground, and since downward acceleration is constant, http://latex.codecogs.com/gif.latex?\rm t<em>i%.png' /> and http://latex.codecogs.com/gif.latex?\rm v</em>{yi}%.png' /&gt; are related by simple projectile motion.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm 0 = v<em>{yi}t</em>i + \frac{1}{2}a<em>yt</em>i^2 = v<em>{yi} + \frac{1}{2}a</em>yt_i%.png' /&gt;</p>
+<p>http://latex.codecogs.com/gif.latex?\rm t<em>i = \frac{-2v</em>{yi}}{a_y}%.png' /&gt;</p>
+<p>We can also express http://latex.codecogs.com/gif.latex?\rm v<em>{yi}%.png' /> in terms of the initial upward velocity http://latex.codecogs.com/gif.latex?\rm v</em>{y0}%.png' /&gt;, and the velocity damping applied at the start of each trajectory http://latex.codecogs.com/gif.latex?\rm damp_y%.png' /&gt;.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm v<em>{yi} = v</em>{y0} damp_y^i%.png' /&gt;</p>
+<p>Combining equations, we have the time spend in each trajectory in terms of the initial velocity http://latex.codecogs.com/gif.latex?\rm v_{y0}%.png' /&gt;.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm t<em>i = \frac{-2 v</em>{y0} damp<em>y^i}{a</em>y}%.png' /&gt;</p>
+<p>Taking the sum over all trajectories, we can replace the unknown trajectory times http://latex.codecogs.com/gif.latex?\rm t<em>i%.png' /> with the known total resting time http://latex.codecogs.com/gif.latex?\rm t</em>{rest}%.png' /&gt;.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm t<em>{rest} = \sum</em>{i=0}^{n-1} t<em>i = \sum</em>{i=0}^{n-1} \frac{-2v<em>{y0} damp</em>y^i}{a<em>y} = \frac{-2v</em>{y0}}{a<em>y} \sum</em>{i=0}^{n-1}damp_y^i%.png' /&gt;</p>
+<p>We can solve this for http://latex.codecogs.com/gif.latex?\rm v_{y0}%.png' /&gt;.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm v<em>{y0} = \frac{t</em>{rest} a<em>y}{-2\sum</em>{i=0}^{n-1}damp_y^i}%.png' /&gt;</p>
+<p>So the initial upward velocity is proportional to the total time spend coming to rest, and to the downward acceleration. It varies inversely with the number of trajectories that a particle must trace before resting, and the velocity damping between trajectories.</p>
+<p>From http://latex.codecogs.com/gif.latex?\rm v<em>{y0}%.png' />, we can calculate any http://latex.codecogs.com/gif.latex?\rm v</em>{yi}%.png' /&gt; and in turn any http://latex.codecogs.com/gif.latex?\rm t<em>i%.png' />. We can also use the http://latex.codecogs.com/gif.latex?\rm t</em>i%.png' /&gt; solutions to solve for horizontal motion (see below).</p>
+<p>So this "easy" system is solved. On to a more general, harder system.</p>
+<p>Harder System</p>
+<p>Now consider a more general system, in which a particle may start out in mid-air. This system is harder to solve because the non-zero starting height introduces a degree of freedom. The system has two solutions, one in which the starting particle velocity is upward, and one in which it's downward.</p>
+<p>The diagram below depicts the y-position of a particle as a function of time, along with its mid-air starting position.</p>
+<p>http://snow-dots.googlecode.com/svn/wiki/diagrams/explosion-algebra-hard.png</p>
+<p>http://latex.codecogs.com/gif.latex?\rm y<em>{\alpha}%.png' /> is the non-negative starting height of the particle
+http://latex.codecogs.com/gif.latex?\rm v</em>{y\alpha}%.png' /&gt; is the new starting upward velocity of the particle<br />
+http://latex.codecogs.com/gif.latex?\rm v<em>{y\alpha-}%.png' /> is an alternative starting downward velocity of the particle
+http://latex.codecogs.com/gif.latex?\rm t</em>{\alpha}%.png' /&gt; is a time in the past, spent reaching the mid-air starting position<br />
+http://latex.codecogs.com/gif.latex?\rm t<em>{\beta}%.png' /> is the new time spent coming to rest, from the mid-air starting position.
+The intuition for this system is that same as for the easy system. If we knew http://latex.codecogs.com/gif.latex?\rm v</em>{y0}%.png' /&gt; and http://latex.codecogs.com/gif.latex?\rm t<em>{rest}%.png' /> we could solve all of the trajectories. The particle has a known starting position http://latex.codecogs.com/gif.latex?\rm y</em>{\alpha}%.png' /&gt; and a known time http://latex.codecogs.com/gif.latex?\rm t<em>{\beta}%.png' /> that it must spend coming to rest. But it has traveled for some unknown time http://latex.codecogs.com/gif.latex?\rm t</em>{\alpha}%.png' /&gt; since leaving the ground.</p>
+<p>The starting velocity http://latex.codecogs.com/gif.latex?\rm v<em>{y \alpha}%.png' /> is also unknown. Since http://latex.codecogs.com/gif.latex?\rm t</em>{\alpha}%.png' /&gt; and http://latex.codecogs.com/gif.latex?\rm v<em>{y \alpha}%.png' /> are both unknown, there are two possible values for http://latex.codecogs.com/gif.latex?\rm v</em>{y \alpha}%.png' /&gt;. The particle may have recently left the ground, and have a positive http://latex.codecogs.com/gif.latex?\rm v<em>{y \alpha}%.png' />. Or, the particle may have been in the air for a long time and have a negative http://latex.codecogs.com/gif.latex?\rm v</em>{y \alpha -}%.png' /&gt;-. In the diagram above, the dashed purple trajectory shows this second case.</p>
+<p>If we knew http://latex.codecogs.com/gif.latex?\rm t<em>{\alpha}%.png' />, it would be easy to reuse the solution for the easy system and calculate each http://latex.codecogs.com/gif.latex?\rm t</em>i%.png' /&gt;. But http://latex.codecogs.com/gif.latex?\rm t<em>{\alpha}%.png' /> depends on http://latex.codecogs.com/gif.latex?\rm v</em>{y0}%.png' /&gt;, via projectile motion.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm y<em>{\alpha} + v</em>{y0}t<em>{\alpha} + \frac{1}{2}a</em>yt_{\alpha}^2%.png' /&gt;</p>
+<p>http://latex.codecogs.com/gif.latex?\rm 0 = -y<em>{\alpha} + v</em>{y0}t<em>{\alpha} + \frac{1}{2}a</em>yt_{\alpha}^2%.png' /&gt;</p>
+<p>http://latex.codecogs.com/gif.latex?\rm t<em>{\alpha} = \frac{-v</em>{y0} \pm \sqrt{v<em>{y0}^2 + 2a</em>y y<em>{\alpha}}}{a</em>y}%.png' /&gt;</p>
+<p>This is a quadratic for http://latex.codecogs.com/gif.latex?\rm t<em>{\alpha}%.png' />, which has two solutions, as expected. We can't yet solve for http://latex.codecogs.com/gif.latex?\rm t</em>{\alpha}%.png' /&gt; because we don't know http://latex.codecogs.com/gif.latex?\rm v<em>{y0}%.png' />. In the easy system, we had used http://latex.codecogs.com/gif.latex?\rm t</em>{rest}%.png' /&gt; to solve for http://latex.codecogs.com/gif.latex?\rm v<em>{y0}%.png' />. Now we have http://latex.codecogs.com/gif.latex?\rm t</em>{\beta}%.png' /&gt; instead, but the two times are clearly related.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm t<em>{\beta} = t</em>{rest} - t_{\alpha}%.png' /&gt;</p>
+<p>We can expand this to view http://latex.codecogs.com/gif.latex?\rm t<em>{\beta}%.png' /> in terms of http://latex.codecogs.com/gif.latex?\rm v</em>{y0}%.png' /&gt;.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm t<em>{\beta} = \left (\frac{-2v</em>{y0}}{a<em>y} \sum</em>{i=0}^{n-1}damp<em>y^i \right) - \left (\frac{-v</em>{y0} \pm \sqrt{v<em>{y0}^2 + 2a</em>y y<em>{\alpha}}}{a</em>y} \right)%.png' /&gt;</p>
+<p>Rearranging terms isolates the square root.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm t<em>{\beta}a</em>y = \left (-2v<em>{y0} \sum</em>{i=0}^{n-1}damp<em>y^i \right) - \left (-v</em>{y0} \pm \sqrt{v<em>{y0}^2 + 2a</em>y y_{\alpha}} \right)%.png' /&gt;</p>
+<p>http://latex.codecogs.com/gif.latex?\rm t<em>{\beta}a</em>y + \left (2v<em>{y0} \sum</em>{i=0}^{n-1}damp<em>y^i \right) -v</em>{y0} = \pm \sqrt{v<em>{y0}^2 + 2a</em>y y_{\alpha}}%.png' /&gt;</p>
+<p>Squaring both sides eliminates the square root. It also incurs a lot of algebra!</p>
+<p>http://latex.codecogs.com/gif.latex?\rm \left[ t<em>{\beta}a</em>y + \left (2v<em>{y0} \sum</em>{i=0}^{n-1}damp<em>y^i \right) -v</em>{y0} \right ]^2= v<em>{y0}^2 + 2a</em>y y_{\alpha}%.png' /&gt;</p>
+<p>The end result is a new quadratic for http://latex.codecogs.com/gif.latex?\rm v_{y0}%.png' /&gt;.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm 0 = t<em>{\beta}^2a</em>y^2-2a<em>y y</em>{\alpha} \hspace{2mm}+\hspace{2mm} 2t<em>{\beta}a</em>y\left[2\left(\sum<em>{i=0}^{n-1}damp</em>y^i\right)-1\right]v<em>{y0} \hspace{2mm}+\hspace{2mm} 4\left[\left(\sum</em>{i=0}^{n-1}damp<em>y^i\right)^2 - \sum</em>{i=0}^{n-1}damp<em>y^i\right]v</em>{y0}^2%.png' /&gt;</p>
+<p>The coefficients http://latex.codecogs.com/gif.latex?\rm A%.png' /&gt;, http://latex.codecogs.com/gif.latex?\rm B%.png' /&gt;, and http://latex.codecogs.com/gif.latex?\rm C%.png' /&gt; are cumbersome, but allow us to solve for http://latex.codecogs.com/gif.latex?\rm v_{y0}%.png' /&gt;.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm A = 4\left[\left(\sum<em>{i=0}^{n-1}damp</em>y^i\right)^2 - \sum<em>{i=0}^{n-1}damp</em>y^i\right]%.png' /&gt;</p>
+<p>http://latex.codecogs.com/gif.latex?\rm B = 2t<em>{\beta}a</em>y\left[2\left(\sum<em>{i=0}^{n-1}damp</em>y^i\right)-1\right]%.png' /&gt;</p>
+<p>http://latex.codecogs.com/gif.latex?\rm C = t<em>{\beta}^2a</em>y^2-2a<em>y y</em>{\alpha}%.png' /&gt;</p>
+<p>http://latex.codecogs.com/gif.latex?\rm V_{y0} =\frac{-B \pm \sqrt{B^2 - 4AC}}{2A}%.png' /&gt;</p>
+<p>Since http://latex.codecogs.com/gif.latex?\rm i%.png' /&gt; starts at 0, the sums are always at least 1, and http://latex.codecogs.com/gif.latex?\rm A%.png' /&gt; is always non-negative. Assuming http://latex.codecogs.com/gif.latex?\rm t<em>{\beta}%.png' /> > 0 and http://latex.codecogs.com/gif.latex?\rm a</em>y%.png' /&gt; < 0, http://latex.codecogs.com/gif.latex?\rm B%.png' /> is always negative. Assuming http://latex.codecogs.com/gif.latex?\rm y_{\alpha}%.png' /&gt; &gt; 0, http://latex.codecogs.com/gif.latex?\rm C%.png' /&gt; is always positive. Thus, the "-" root is always less than the "+" root.</p>
+<p>The "-" root of http://latex.codecogs.com/gif.latex?\rm v<em>{y0}%.png' /> should correspond to small, low velocity bounces, and a small value of http://latex.codecogs.com/gif.latex?\rm t</em>{\alpha}%.png' /&gt;. This would correspond to a positive value of http://latex.codecogs.com/gif.latex?\rm v_{y \alpha}%.png' /&gt;.</p>
+<p>Conversely, the "+" root of http://latex.codecogs.com/gif.latex?\rm v<em>{y0}%.png' /> should correspond to large, high-velocity bounces and a longer value of http://latex.codecogs.com/gif.latex?\rm t</em>{\alpha}%.png' /&gt;. This would correspond to a negative value of http://latex.codecogs.com/gif.latex?\rm v_{y \alpha}%.png' /&gt; and the dashed purple trajectory in the diagram above.</p>
+<p>Minimum Resting Time</p>
+<p>In order for http://latex.codecogs.com/gif.latex?\rm v_{y0}%.png' /&gt; to have real roots, the quadratic discriminant must be non-negative.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm 0 < B^2 - 4AC%.png' /></p>
+<p>There are many ways to manipulate this inequality, to emphasize one parameter or another. We can also interpret the inequality with physical intuition: real roots should represent scenarios that are plausible in the physical world, imaginary roots should represent impossible scenarios.</p>
+<p>One impossible scenario would require a particle to come to rest in too short a time. For example, if the starting height or velocity were too high, or the downward acceleration too small, the particle might be unable to reach the ground and trace out all of its trajectories before the resting time elapsed. Scenarios like this should lead to imaginary roots.</p>
+<p>What is the minimum resting time that a particle can satisfy, given other parameters? A key factor would be starting velocity http://latex.codecogs.com/gif.latex?\rm v_{y \alpha}%.png' /&gt;. Whether upward or downward, large velocities should lead to larger bounces, which would demand longer resting times.</p>
+<p>This intuition suggests that "dropping" a particle with zero starting velocity should lead to the smallest resting times. What is the smallest plausible resting time http://latex.codecogs.com/gif.latex?\rm t<em>{\beta min}%.png' />, given http://latex.codecogs.com/gif.latex?\rm v</em>{y \alpha} = 0%.png' /&gt;?</p>
+<p>Consider the time it takes to trace the 0th partial trajectory. Let http://latex.codecogs.com/gif.latex?\rm t<em>{drop}%.png' /> be the time it takes to fall from starting height http://latex.codecogs.com/gif.latex?\rm y</em>{\alpha}%.png' /&gt;, with http://latex.codecogs.com/gif.latex?\rm v_{y \alpha} = 0%.png' /&gt;. This is straightforward projectile motion.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm 0 = y<em>{\alpha} + 0*t</em>{drop} + \frac{1}{2}a<em>yt</em>{drop}^2%.png' /&gt;</p>
+<p>http://latex.codecogs.com/gif.latex?\rm t<em>{drop} = \sqrt{\frac{-2y</em>{\alpha}}{a_y}}%.png' /&gt;</p>
+<p>Since the particle began with zero velocity, it must have begun at the vertex of the 0th trajectory. Thus, the falling time http://latex.codecogs.com/gif.latex?\rm t<em>{drop}%.png' /> must be symmetric with the rising time http://latex.codecogs.com/gif.latex?\rm t</em>{\alpha}%.png' /&gt;. Thus, the initial velocity http://latex.codecogs.com/gif.latex?\rm v_{y0min}%.png' /&gt; follows from projectile velocity.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm 0 = v<em>{y0min} + t</em>{drop}a_y%.png' /&gt;</p>
+<p>http://latex.codecogs.com/gif.latex?\rm v<em>{y0min} = -t</em>{drop}a_y%.png' /&gt;</p>
+<p>This accounts for the 0th trajectory. The time required for the remaining trajectories follows from the number of trajectories and the damping at each bounce.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm t<em>{1:nmin} = \frac{-2v</em>{y0min}}{a<em>y}\sum</em>{i=1}^{n-1}damp_y^i%.png' /&gt;</p>
+<p>Adding up times for the 0th and the remaining trajectories, we have the minimum plausible resting time http://latex.codecogs.com/gif.latex?\rm t_{\beta min}%.png' /&gt;.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm t<em>{\beta min} = t</em>{drop} + t<em>{1:nmin} = \sqrt{\frac{-2y</em>a}{a<em>y}} + \frac{-2\sqrt{-2a</em>yy<em>{\alpha}}}{a</em>y} \sum<em>{i=1}^{n-1}damp</em>y^i%.png' /&gt;</p>
+<p>dotsDrawableExplosion clips resting times to this minimum value.</p>
+<p>Horizontal Motion</p>
+<p>The explanations above account for with vertical motion and trajectory times. Once we know the trajectory times, we can also solve for horizontal motion.</p>
+<p>Consider a total horizontal displacement http://latex.codecogs.com/gif.latex?\rm x<em>{rest}%.png' />, displacements within each trajectory http://latex.codecogs.com/gif.latex?\rm x</em>i%.png' /&gt;, and horizontal velocity damping applied at each bounce http://latex.codecogs.com/gif.latex?\rm damp<em>x%.png' />. What are the horizontal velocities at the start of each trajectory http://latex.codecogs.com/gif.latex?\rm v</em>{xi}%.png' /&gt;?</p>
+<p>If we knew the initial horizontal velocity http://latex.codecogs.com/gif.latex?\rm v_{x0}%.png' /&gt;, each subsequent trajectory velocity would follow from velocity damping.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm v<em>{xi} = v</em>{x0} damp_x^i%.png' /&gt;</p>
+<p>We can also relate individual velocities to the known total displacement.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm x<em>{rest} = \sum</em>{i=0}^{n-1} x<em>i = \sum</em>{i=0}^{n-1} t<em>i v</em>{xi}%.png' /&gt;</p>
+<p>Combining equations, we can solve for http://latex.codecogs.com/gif.latex?\rm v_{x0}%.png' /&gt;.</p>
+<p>http://latex.codecogs.com/gif.latex?\rm x<em>{rest} = \sum</em>{i=0}^{n-1} t<em>i v</em>{x0} damp<em>x^i = v</em>{x0}\sum<em>{i=0}^{n-1} t</em>i damp_x^i%.png' /&gt;</p>
+<p>http://latex.codecogs.com/gif.latex?\rm v<em>{x0} = \frac{x</em>{rest}}{\sum<em>{i=0}^{n-1} t</em>i damp_x^i}%.png' /&gt;</p>
+<p>This is how dotsDrawableExplosion solves for horizontal motion, after solving for vertical motion and time.</p>
+
+        </div>
+        <style type='text/css'>body {
+  font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #111;
+  background-color: #fdfdfd;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  -o-font-feature-settings: "kern" 1;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 5px;
+  }
+
+  body > #content {
+    padding: 0px 20px 20px 20px !important;
+  }
+}
+
+body > #content {
+  margin: 0px;
+  max-width: 900px;
+  border: 1px solid #e1e4e8;
+  padding: 10px 40px;
+  padding-bottom: 20px;
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr {
+  color: #bbb;
+  background-color: #bbb;
+  height: 1px;
+  flex: 0 1 auto;
+  margin: 1em 0;
+  padding: 0;
+  border: none;
+}
+
+/**
+ * Links
+ */
+a {
+  color: #0366d6;
+  text-decoration: none; }
+  a:visited {
+    color: #0366d6; }
+  a:hover {
+    color: #0366d6;
+    text-decoration: underline; }
+
+pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+}
+
+/**
+  * Code blocks
+  */
+
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  word-wrap: break-word;
+  padding: .2em .4em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+
+pre > code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+  font-size: 100%;
+}
+
+
+/**
+ * Blockquotes
+ */
+blockquote {
+  margin-left: 30px;
+  margin-top: 0px;
+  margin-bottom: 16px;
+  border-left-width: 3px;
+  padding: 0 1em;
+  color: #828282;
+  border-left: 4px solid #e8e8e8;
+  padding-left: 15px;
+  font-size: 18px;
+  letter-spacing: -1px;
+  font-style: italic;
+}
+blockquote * {
+  font-style: normal !important;
+  letter-spacing: 0;
+  color: #6a737d !important;
+}
+
+/**
+ * Tables
+ */
+table {
+  border-spacing: 2px;
+  display: block;
+  font-size: 14px;
+  overflow: auto;
+  width: 100%;
+  margin-bottom: 16px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/**
+ * Others
+ */
+
+img {
+  max-width: 100%;
+}
+
+p {
+  line-height: 24px;
+  font-weight: 400;
+  font-size: 16px;
+  color: #24292e; }
+
+ul {
+  margin-top: 0; }
+
+li {
+  color: #24292e;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5; }
+
+li + li {
+  margin-top: 0.25em; }
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #24292e; }
+
+a:visited {
+  color: #0366d6; }
+
+h1, h2, h3 {
+  border-bottom: 1px solid #eaecef;
+  color: #111;
+  /* Darker */ }</style>
+      </body>
+    </html>

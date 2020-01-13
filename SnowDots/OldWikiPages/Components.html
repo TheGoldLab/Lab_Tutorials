@@ -1,0 +1,262 @@
+
+    <html>
+      <head>
+        <title>Components</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body>
+        <div id='content'>
+    <p>Here is a summary Snow Dots components.</p>
+<p>Some components are integrated with Snow Dots, so you need to install the whole project to use them.</p>
+<p>Others components are separable, so you can download them and use them in isolation, if you want.</p>
+<p>http://snow-dots.googlecode.com/svn/wiki/diagrams/components.png</p>
+<p>Integrated</p>
+<p>These components are integral to Snow Dots and would be hard to use without installing the whole project.</p>
+<p><strong>Multiple Matlab Instances</strong></p>
+<p>Snow Dots can span multiple Matlab instances, using a client-server model. Client and server can run on the same machine, or different machines. The client is the primary Matlab instance and initiates all behaviors. There can be one or more server instances, which wait for requests from the client and carry out out behaviors.</p>
+<p>Client-server behaviors are based on ensembles, which group together related objects and call methods and functions. See the classes dotsClientEnsemble and dotsEnsembleServer.</p>
+<p>Client-server communicate via Ethernet and the UDP protocol. The class dotsTheMessenger handles communication details.</p>
+<p><strong>Drawables</strong></p>
+<p>The dotsDrawable superclass defines a uniform interface for objects that draw graphics. Several subclasses implement the interface to draw things like lines or images. Users can also create custom drawable subclasses.</p>
+<p>Drawables all use OpenGL. Thanks to the MGL project for OpenGL support.</p>
+<p>dotsTheScreen manages the OpenGL drawing window and swapping of frame buffers.</p>
+<p><strong>Playables</strong></p>
+<p>The dotsPlayable superclass defines a uniform interface for objects that play sounds. Two subclasses implement the interface to play tones or .wav or .mp3 files. Users can also create custom playable subclasses.</p>
+<p>As of Version 1, playable classes use Matlab's built-in audioplayer functionality, which is limited. But there are better sound back-ends, such as those in MGL or Psychtoolbox. Snow Dots should adopt one…</p>
+<p><strong>Readables</strong></p>
+<p>The dotsReadable superclass defines a uniform interface for objects that read data. Several subclasses implement the interface to read from things like keyboards and other USB/HID devices, or eye trackers. Users can also create custom readable subclasses.</p>
+<p>Readables usually rely on Mex functions to provide raw data. As of Version 1, most readables have Mex function support only in OS X.</p>
+<p><strong>Machine Configuration</strong></p>
+<p>Snow Dots can save machine-specific configuration, such as IP addresses, port numbers, file paths, and MGL display indexes. It uses Matlab's built-in functionality for working with .xml files. It stores values as Matlab expressions, so the .xml files are human-readable and human-editable.</p>
+<p>dotsTheMachineConfiguration provides a front-end for viewing, editing, and querying configuration data within Matlab. It can also apply default property values to objects, based on their class.</p>
+<p><strong>Demos</strong></p>
+<p>Snow Dots has example code in the demos/ folder. Many demos are short and simple, showing how to do things like draw graphics or send digital outputs.</p>
+<p>Examples in the demos/tasks/ folder are more complicated and span multiple files. They combine Snow Dots components into functional games or tasks.</p>
+<p>The demos/particleSystem folder contains an example using OpenGL shader programs and transform feedback. It shows how hardware-accelerated graphics can make a big difference in animation!</p>
+<p>Separable</p>
+<p>These components can work on their own, and might be useful even if you don't want to use the rest of Snow Dots.</p>
+<p><strong>Tower of Psych</strong></p>
+<p>Snow Dots inherits a lot of style and functionality from its companion project, Tower of Psych.</p>
+<p>In particular, it uses object-oriented design, topsRunnable objects for controlling flow of events and automatic data logging, graphical interfaces for many components, and a spatial model for classifying data.</p>
+<p>The Snow Dots documentation is cross-linked with the Tower of Psych documentation.</p>
+<p><strong>dotsMgl Mex Functions</strong></p>
+<p>Snow Dots has several C-language Mex functions that extend the OpenGL capabilities of MGL. These include support for vertex buffer objects, shader programs, and transform feedback.</p>
+<p>These Mex-functions might be useful, even without the rest of Snow Dots. You can check them out here: svn checkout http://snow-dots.googlecode.com/svn/trunk/mex/dotsMgl dots-mgl-extensions</p>
+<p>Note: dotsMgl transform feedback depends on the OpenGL 2.0 extension named "EXT<em>transform</em>feedback".</p>
+<p><strong>mexHID() Mex Function</strong></p>
+<p>Snow Dots provides a C-language Mex function for working with Human Interface Devices (HIDs). HIDs include USB devices like keyboards, mouses, and joysticks. They also include unusual devices, like digital-analog-converters and the Nintendo Wii remote!</p>
+<p>In addition to the mexHID() Mex function, Snow Dots provides some HID utilities: * mexHIDScout() scans the system for connected HID devices and displays a table summarizing their properties. It can also plot data coming from each device. * mexHIDUsage is a class that helps identify HID devices and device components. It allows you to look up sensible names for obscure numeric constants, and vice versa. For example, the number 4 often means "Joystick", and 44 means "KeyboardSpacebar". mexHIDUsage.gui() displays a table summarizing all constants and names.</p>
+<p>mexHID() might be useful, even without the rest of Snow Dots. You can check it out here: svn checkout http://snow-dots.googlecode.com/svn/trunk/mex/mexHID mex-hid</p>
+<p>Note: as of Version 1, mexHID() is only implemented for OS X, 10.5 or later. But the Mex function interface is written separately from the internal functionality. So it should be possible to implement mexHID() for other platforms as well.</p>
+<p><strong>mexUDP() Mex Function</strong></p>
+<p>Snow Dots provides a C-language Mex function for working with network sockets. These are based on the IP and UDP protocols, so they're good for sending short messages without a lot of overhead.</p>
+<p>mexUDP() might be useful on its own. You can check it out here: svn checkout http://snow-dots.googlecode.com/svn/trunk/mex/mexUDP mex-udp</p>
+<p>Note: mexUDP() is based on Berkeley Sockets, so it's is easy to build it on platforms like OS X and Linux. It should be possible to build mexUDP() on Windows, but it would take a little work.</p>
+<p>Also note: Snow Dots can use the pnet() function as an alternative to mexUDP(). pnet() is part of the free TCP UDP IP Toolbox. mexUDP() is faster, pnet() more portable.</p>
+<p><strong>mxGram() Mex Function</strong></p>
+<p>Snow Dots provides a C-language Mex function for serializing data. It can convert a Matlab variable to a formatted sequence of bytes, and it can convert a formatted sequence of bytes into a Matlab variable. This allows data to be sent from one Matlab instance to another, via Ethernet.</p>
+<p>mxGram() supports several basic Matlab data types: * double 2D matrices * char 2D matrices * logical 2D matrices * cell 2D matrices * struct 1D arrays * function_handle scalars Cell matrices and struct arrays may be nested arbitrarily.</p>
+<p>mxGram() does not support objects. It also does not support very large variables, since serialized data are intended to be send in a single UDP datagram.</p>
+<p>mxGram() might be useful on its own. You can check it out here: svn checkout http://snow-dots.googlecode.com/svn/trunk/mex/mxGram mx-gram</p>
+<p>Note: mxGram() assumes that sender and receive encode double values in the same standard 8-byte format. This seems to be true for OS X, Windows, and Linux.</p>
+<p><strong>Digital Outputs</strong></p>
+<p>The dotsAllDOutObjects superclass defines a uniform interface for objects that send digital outputs. The dotsDOut1208FS subclass implements the interface using using the 1208FS device from Measurement Computing.</p>
+<p>The dotsAllDOutObjects interface could be re-implemented, using different devices. This would allow the same Snow Dots code to use whatever device was available.</p>
+<p>The digital output code might be useful on its own. You can check it out here: svn checkout http://snow-dots.googlecode.com/svn/trunk/classes/dOut digital-outputs</p>
+<p>You'll also need mexHID() to communicate with the 1208FS device: svn checkout http://snow-dots.googlecode.com/svn/trunk/mex/mexHID mex-hid</p>
+<p><strong>Analog Inputs</strong></p>
+<p>The AInScan1208FS class is a utility for doing analog input scanning with the 1208FS device from Measurement Computing. The class handles a lot of low-level bookkeeping and data formatting details, and should make it easier to work with the 1208FS device.</p>
+<p>AInScan1208FS might be useful on its own. You can check it out here: svn checkout http://snow-dots.googlecode.com/svn/trunk/utilities/measurementComputing/ analog-inputs</p>
+<p>You'll also need mexHID() to communicate with the 1208FS device: svn checkout http://snow-dots.googlecode.com/svn/trunk/mex/mexHID mex-hid</p>
+<p><strong>Miscellaneous</strong></p>
+<p>Snow Dots has several utilities for miscellaneous tasks. These include things like measuring the drift between digital clocks, predicting video frame onset times, computing vertex locations for disks and polygons, converting variables to Matlab expressions, and installing Snow Dots itself.</p>
+<p>Some of these might be useful without the rest of Snow Dots. You can check them out here: svn checkout http://snow-dots.googlecode.com/svn/trunk/utilities</p>
+
+        </div>
+        <style type='text/css'>body {
+  font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #111;
+  background-color: #fdfdfd;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  -o-font-feature-settings: "kern" 1;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 5px;
+  }
+
+  body > #content {
+    padding: 0px 20px 20px 20px !important;
+  }
+}
+
+body > #content {
+  margin: 0px;
+  max-width: 900px;
+  border: 1px solid #e1e4e8;
+  padding: 10px 40px;
+  padding-bottom: 20px;
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr {
+  color: #bbb;
+  background-color: #bbb;
+  height: 1px;
+  flex: 0 1 auto;
+  margin: 1em 0;
+  padding: 0;
+  border: none;
+}
+
+/**
+ * Links
+ */
+a {
+  color: #0366d6;
+  text-decoration: none; }
+  a:visited {
+    color: #0366d6; }
+  a:hover {
+    color: #0366d6;
+    text-decoration: underline; }
+
+pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+}
+
+/**
+  * Code blocks
+  */
+
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  word-wrap: break-word;
+  padding: .2em .4em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+
+pre > code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+  font-size: 100%;
+}
+
+
+/**
+ * Blockquotes
+ */
+blockquote {
+  margin-left: 30px;
+  margin-top: 0px;
+  margin-bottom: 16px;
+  border-left-width: 3px;
+  padding: 0 1em;
+  color: #828282;
+  border-left: 4px solid #e8e8e8;
+  padding-left: 15px;
+  font-size: 18px;
+  letter-spacing: -1px;
+  font-style: italic;
+}
+blockquote * {
+  font-style: normal !important;
+  letter-spacing: 0;
+  color: #6a737d !important;
+}
+
+/**
+ * Tables
+ */
+table {
+  border-spacing: 2px;
+  display: block;
+  font-size: 14px;
+  overflow: auto;
+  width: 100%;
+  margin-bottom: 16px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/**
+ * Others
+ */
+
+img {
+  max-width: 100%;
+}
+
+p {
+  line-height: 24px;
+  font-weight: 400;
+  font-size: 16px;
+  color: #24292e; }
+
+ul {
+  margin-top: 0; }
+
+li {
+  color: #24292e;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5; }
+
+li + li {
+  margin-top: 0.25em; }
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #24292e; }
+
+a:visited {
+  color: #0366d6; }
+
+h1, h2, h3 {
+  border-bottom: 1px solid #eaecef;
+  color: #111;
+  /* Darker */ }</style>
+      </body>
+    </html>

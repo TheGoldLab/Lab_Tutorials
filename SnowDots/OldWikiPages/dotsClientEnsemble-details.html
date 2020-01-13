@@ -1,0 +1,214 @@
+
+    <html>
+      <head>
+        <title>dotsClientEnsemble-details</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body>
+        <div id='content'>
+    <p>dotsClientEnsemble (client) is used for communicating tasks between multiple machines and is paired with <a href="server">[dotsEnsembleServer|dotsEnsembleServer details]</a>. Both of these objects mimic the [[topsEnsemble|topsEnsemble details]]. To instantiate one of these objects, you need IP addresses and ports of both the machine this object runs on and the machine server runs on. The example below shows how this is done using the <code>localhost</code> IP address and some arbitrary ports. It is important to note that the server object must be running <strong>BEFORE</strong> you instantiate the client. </p>
+<pre><code>myClientEnsemble = dotsClientEnsemble('any_name','127.0.0.1',30000,'127.0.0.1',30001);
+</code></pre>
+<p>To make sure that you are connected to a server, type the following in your console</p>
+<pre><code>myClientEnsemble.isconnected
+</code></pre>
+<p>which should give you an output like this</p>
+<pre><code>ans =
+     1
+</code></pre>
+<p>If the output is <code>0</code>, then that means the client failed to successfully connect to the server. Make sure that both objects were instantiated with identical IPs and Ports (the ordering of the input parameters is identical for both objects). If that still does not fix the issue, try restarting Matlab on both machines.</p>
+<p>Once you have successfully connected a client to a server, you can use the client just like you would a topsEnsemble object. Anything command run through the client will be mirrored and executed on the server. One caveat is that the <code>runBriefly()</code> function does not seem to work. In order to replicate similar behavior, use the <code>run()</code> function with a small time parameter. </p>
+<p>In order to connect to many servers on one machine, you must instantiate a client for each server you to which you want to connect. A server, however, can take connections from many different clients simultaneously. Furthermore, it will keep track of which client added which object, so that commands executed through a particular client will only affect the objects associated with that client. It is not recommended to send commands from multiple clients simultaneously to a single server.</p>
+<p>For details on what the inherited functions of this class do, see the [[topsEnsemble page|topsEnsemble details]]. Below are functions specific to this class only.</p>
+<h1 id="functions">Functions</h1>
+<h2 id="function-status-txn--resetservertimeout-clientip-clientport-serverip-serverport">function [status, txn] = resetServer(timeout, clientIP, clientPort, serverIP, serverPort)</h2>
+<p>This function will attempt to connect to the server using the provided addresses and tell it to reset. Resetting the server clears all the objects/client data on the server, but does not stop the server from running. This function will give up if the server does not respond within the <code>timeout</code> time. A negative <code>status</code> value means that the reset has failed. <code>txn</code> provides detailed information about the transaction.</p>
+
+        </div>
+        <style type='text/css'>body {
+  font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #111;
+  background-color: #fdfdfd;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  -o-font-feature-settings: "kern" 1;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 5px;
+  }
+
+  body > #content {
+    padding: 0px 20px 20px 20px !important;
+  }
+}
+
+body > #content {
+  margin: 0px;
+  max-width: 900px;
+  border: 1px solid #e1e4e8;
+  padding: 10px 40px;
+  padding-bottom: 20px;
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr {
+  color: #bbb;
+  background-color: #bbb;
+  height: 1px;
+  flex: 0 1 auto;
+  margin: 1em 0;
+  padding: 0;
+  border: none;
+}
+
+/**
+ * Links
+ */
+a {
+  color: #0366d6;
+  text-decoration: none; }
+  a:visited {
+    color: #0366d6; }
+  a:hover {
+    color: #0366d6;
+    text-decoration: underline; }
+
+pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+}
+
+/**
+  * Code blocks
+  */
+
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  word-wrap: break-word;
+  padding: .2em .4em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+
+pre > code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+  font-size: 100%;
+}
+
+
+/**
+ * Blockquotes
+ */
+blockquote {
+  margin-left: 30px;
+  margin-top: 0px;
+  margin-bottom: 16px;
+  border-left-width: 3px;
+  padding: 0 1em;
+  color: #828282;
+  border-left: 4px solid #e8e8e8;
+  padding-left: 15px;
+  font-size: 18px;
+  letter-spacing: -1px;
+  font-style: italic;
+}
+blockquote * {
+  font-style: normal !important;
+  letter-spacing: 0;
+  color: #6a737d !important;
+}
+
+/**
+ * Tables
+ */
+table {
+  border-spacing: 2px;
+  display: block;
+  font-size: 14px;
+  overflow: auto;
+  width: 100%;
+  margin-bottom: 16px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/**
+ * Others
+ */
+
+img {
+  max-width: 100%;
+}
+
+p {
+  line-height: 24px;
+  font-weight: 400;
+  font-size: 16px;
+  color: #24292e; }
+
+ul {
+  margin-top: 0; }
+
+li {
+  color: #24292e;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5; }
+
+li + li {
+  margin-top: 0.25em; }
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #24292e; }
+
+a:visited {
+  color: #0366d6; }
+
+h1, h2, h3 {
+  border-bottom: 1px solid #eaecef;
+  color: #111;
+  /* Darker */ }</style>
+      </body>
+    </html>

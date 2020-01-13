@@ -1,0 +1,233 @@
+
+    <html>
+      <head>
+        <title>topsEnsemble-details</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body>
+        <div id='content'>
+    <p>topsEnsemble is very similar to topsCallList. Whereas topsCallList is used to run a group of fevalables, topsEnsemble is designed to hold a group of objects. This allows it to execute batch functions using those objects OR methods of the objects it contains. When adding objects to a topsEnsemble, it is important that the objects all share a common property or method, which will allow topsEnsemble to access those values or run those methods on all the objects it contains. </p>
+<p>Note that this functionality could in theory also be achieved using a topsCallList since methods in Matlab can be called via <code>obj.method(...)</code> or <code>method(obj,...)</code>. However, using a topsEnsemble will be more convenient once you have many objects or common methods. It is recommended to use objects that are <code>handle</code> subclasses with topsEnsemble.</p>
+<p>Initializing a topsEnsemble is straightforward as follows</p>
+<pre><code>myTopsEnsemble = topsEnsemble();
+</code></pre>
+<p>Objects can be added using the <code>addObjects()</code> method. Once  you have added your objects to the ensemble, you can automate object methods so that they will run automatically. Afterwards, calling the <code>run()</code> or <code>runBriefly()</code> function of topsEnsemble will automatically run such methods. See below for an example.</p>
+<pre><code>myObject = myObjectClass();
+myTopsEnsemble.addObject(myObject);
+myTopsEnsemble.automateObjectMethod('myMethod', @myObjectClass.method, {}, [], false);
+myTopsEnsemble.run();
+</code></pre>
+<p>Note that in the example above <code>myObject.method</code> is a static method. Non-static methods do not need (and will not work with) a function handle including the object class. Instead, using <code>@method</code> will suffice due to the way Matlab methods work.</p>
+<p>Below are details on various functions in topsEnsemble that may be useful.</p>
+<h1 id="functions">Functions</h1>
+<h2 id="function-object--removeobjectself-index">function object = removeObject(self, index)</h2>
+<p>This will remove the object at the specified index from the ensemble. Note that removing an object may resize the underlying cell array so that old indices are no longer valid.</p>
+<h2 id="function-object--getobjectself-index">function object = getObject(self, index)</h2>
+<p>Retrieve the object at the specified index in the ensemble. This does not remove the object from the ensemble.</p>
+<h2 id="function-ismember-index--containsobjectself-object">function [isMember, index] = containsObject(self, object)</h2>
+<p>Check whether the ensemble contains the specified object. If so, returns the index at which this object is located within the ensemble.</p>
+<h2 id="function-assignobjectself-innerindex-outerindex-varargin">function assignObject(self, innerIndex, outerIndex, varargin)</h2>
+<p>This function assigns the object specified by <code>innerIndex</code> to a property in the object specified by <code>outerIndex</code>. Thus, both objects must be in the ensemble for this function to work. The input for varargin will be directly passed into the Matlab native function <code>substruct</code> to format it so that Matlab can assign the objects properly. See the Matlab documentation for <a href="https://www.mathworks.com/help/matlab/ref/substruct.html">substruct</a> and <a href="https://www.mathworks.com/help/matlab/ref/subsasgn.html?s_tid=doc_ta">subsasgn</a>. Note that these links point to the documentation for the latest version of Matlab. In order to access archived documentation, you will need a Mathworks account.</p>
+<h2 id="function-passobjectself-innerindex-outerindex-method-args-argindex">function passObject(self, innerIndex, outerIndex, method, args, argIndex)</h2>
+<p>This function passes the object at <code>innerIndex</code> to a method of the object at <code>outerIndex</code>. By default, this function passes the innerIndex object as the first argument. If it should not be the first argument, specify the other arguments in the <code>args</code> parameter and where the object should go using the <code>argIndex</code> parameter. This function will effectively run</p>
+<pre><code>args{argIndex} = innerObj;
+outerObj.method(args{:});
+</code></pre>
+<p>Both objects must be in the ensemble for this method to work.</p>
+<h2 id="function-setobjectpropertyself-property-value-index">function setObjectProperty(self, property, value, index)</h2>
+<p>Sets the value of a property at for the object at the specified <code>index</code>.</p>
+<h2 id="function-value--getobjectpropertyself-property-index">function value = getObjectProperty(self, property, index)</h2>
+<p>Retrieves the value of a property for an object at the specified index.</p>
+<h2 id="function-result--callobjectmethodself-method-args-index-iscell">function result = callObjectMethod(self, method, args, index, isCell)</h2>
+<p>Calls a common method among all the objects in the ensemble using the <code>args</code> as inputs if provided. <code>Index</code> can be used to specify which objects to all the method on and <code>isCell</code> specifies whether the inputs should be encapsulated in a cell array.</p>
+<h2 id="function-index--automateobjectmethodself-name-method-args-index-iscell-isactive">function index = automateObjectMethod(self, name, method, args, index, isCell, isActive)</h2>
+<p>This sets up a <code>method</code> to be automatically called when <code>run()</code> or <code>runBriefly()</code> is invoked on the ensemble. <code>isCell</code> tells function to pass all the arguments in one cell array to the method. If <code>isActive</code> is set to false, this named function call will be ignored when <code>run()</code> or <code>runBriefly()</code> is called.</p>
+
+        </div>
+        <style type='text/css'>body {
+  font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #111;
+  background-color: #fdfdfd;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  -o-font-feature-settings: "kern" 1;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 5px;
+  }
+
+  body > #content {
+    padding: 0px 20px 20px 20px !important;
+  }
+}
+
+body > #content {
+  margin: 0px;
+  max-width: 900px;
+  border: 1px solid #e1e4e8;
+  padding: 10px 40px;
+  padding-bottom: 20px;
+  border-radius: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr {
+  color: #bbb;
+  background-color: #bbb;
+  height: 1px;
+  flex: 0 1 auto;
+  margin: 1em 0;
+  padding: 0;
+  border: none;
+}
+
+/**
+ * Links
+ */
+a {
+  color: #0366d6;
+  text-decoration: none; }
+  a:visited {
+    color: #0366d6; }
+  a:hover {
+    color: #0366d6;
+    text-decoration: underline; }
+
+pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+}
+
+/**
+  * Code blocks
+  */
+
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  word-wrap: break-word;
+  padding: .2em .4em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+
+pre > code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+  font-size: 100%;
+}
+
+
+/**
+ * Blockquotes
+ */
+blockquote {
+  margin-left: 30px;
+  margin-top: 0px;
+  margin-bottom: 16px;
+  border-left-width: 3px;
+  padding: 0 1em;
+  color: #828282;
+  border-left: 4px solid #e8e8e8;
+  padding-left: 15px;
+  font-size: 18px;
+  letter-spacing: -1px;
+  font-style: italic;
+}
+blockquote * {
+  font-style: normal !important;
+  letter-spacing: 0;
+  color: #6a737d !important;
+}
+
+/**
+ * Tables
+ */
+table {
+  border-spacing: 2px;
+  display: block;
+  font-size: 14px;
+  overflow: auto;
+  width: 100%;
+  margin-bottom: 16px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/**
+ * Others
+ */
+
+img {
+  max-width: 100%;
+}
+
+p {
+  line-height: 24px;
+  font-weight: 400;
+  font-size: 16px;
+  color: #24292e; }
+
+ul {
+  margin-top: 0; }
+
+li {
+  color: #24292e;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5; }
+
+li + li {
+  margin-top: 0.25em; }
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #24292e; }
+
+a:visited {
+  color: #0366d6; }
+
+h1, h2, h3 {
+  border-bottom: 1px solid #eaecef;
+  color: #111;
+  /* Darker */ }</style>
+      </body>
+    </html>
