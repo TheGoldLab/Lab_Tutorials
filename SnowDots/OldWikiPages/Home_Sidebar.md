@@ -1,2 +1,0 @@
-# Quick links
-Arriving soon!
