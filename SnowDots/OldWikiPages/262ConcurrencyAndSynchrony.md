@@ -1,6 +1,12 @@
 I made some naming and behavior changes that will affect Tower of Psych after revision 186 and Snow Dots after 262.
 
-This page has: * An overview of the big changes * A table of naming changes * A note about dotsTheMachineConfuguration XML files * An explanation of how to do animation, which uses the changes * An explanation of the new topsRunnableGUI graphical interface * An explanation of the new topsConditions class
+This page has: 
+* An overview of the big changes 
+* A table of naming changes 
+* A note about dotsTheMachineConfuguration XML files 
+* An explanation of how to do animation, which uses the changes 
+* An explanation of the new topsRunnableGUI graphical interface 
+* An explanation of the new topsConditions class
 
 **Overview**
 
@@ -16,9 +22,24 @@ Tower of Psych concurrency changes and Snow Dots synchrony changes are related. 
 
 **Naming Changes**
 
-Here are the direct name changes to Tower of Psych: |Old Name|New Name|New Behavior?| |:---------|:---------|:--------------| |topsSeppable|topsConcurrent|no | |topsSergeant|topsConcurrentComposite|no | |topsSeppable.step()|topsConcurrent.runBriefly()|no | |topsTreeNodeGUI|topsRunnableGUI|no, still invoke with object.gui()|
+Here are the direct name changes to Tower of Psych:  
 
-And Snow Dots: |Old Name|New Name|New Behavior?| |:---------|:---------|:--------------| |dotsAllRemoteManagers.finishAllTransactions()|- |gone | |dotsAllRemoteManagers.receiveTransactions()|topsConcurrent.runBriefly()|no longer need to call directly| |- |dotsAllRemoteManagers.runForDuration()|new method | |dotsTheDrawablesManager.mayDrawNextFrame()|- |takes new isAnimating argument| |waitFunction|waitFevalable|cell array, not function handle|
+| Old Name | New Name | New Behavior? |  
+| :--------- | :--------- | :-------------- |  
+| topsSeppable | topsConcurrent | no |   
+| topsSergeant | topsConcurrentComposite | no |   
+| topsSeppable.step() | topsConcurrent.runBriefly() | no |   
+| topsTreeNodeGUI | topsRunnableGUI | no, still invoke with object.gui() |  
+
+And Snow Dots:   
+
+|Old Name|New Name|New Behavior?|  
+|:---------|:---------|:--------------|  
+|dotsAllRemoteManagers.finishAllTransactions()|- |gone |  
+|dotsAllRemoteManagers.receiveTransactions()|topsConcurrent.runBriefly()|no longer need to call directly|  
+|- |dotsAllRemoteManagers.runForDuration()|new method |   
+|dotsTheDrawablesManager.mayDrawNextFrame()|- |takes new isAnimating argument|  
+|waitFunction|waitFevalable|cell array, not function handle|
 
 **waitFevalable and XML files**
 
@@ -52,7 +73,9 @@ Along with the naming changes related to topsConcurrent objects, Tower of Psych 
 
 The Tower of Psych demo script demoRunnables script invokes the new interface for a collection of topsRunnable objects.
 
-There are two key features of the new interface: * All types of topsRunnable objects, including topsTreeNodes, topsStateMachines, or dotsTheDrawablesManager, show up in the new interface * Objects that are children of topsConcurrentComposite objects show up with their (names) inside parentheses. It should be clear at a glance which objects will be run concurrently.
+There are two key features of the new interface: 
+* All types of topsRunnable objects, including topsTreeNodes, topsStateMachines, or dotsTheDrawablesManager, show up in the new interface 
+* Objects that are children of topsConcurrentComposite objects show up with their (names) inside parentheses. It should be clear at a glance which objects will be run concurrently.
 
 **topsConditions**
 
